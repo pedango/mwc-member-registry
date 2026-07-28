@@ -1,0 +1,119 @@
+import { cn } from "@/lib/utils";
+
+/**
+ * Horizontal scroll lives here so tables never nest a second vertical
+ * scrollbar inside the page scroller.
+ */
+export function TableScroller({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("w-full overflow-x-auto", className)}>{children}</div>
+  );
+}
+
+export function DataTable({
+  children,
+  minWidth = 720,
+  className,
+}: {
+  children: React.ReactNode;
+  minWidth?: number;
+  className?: string;
+}) {
+  return (
+    <table
+      className={cn("w-full border-collapse text-left text-sm", className)}
+      style={{ minWidth }}
+    >
+      {children}
+    </table>
+  );
+}
+
+export function THead({ children }: { children: React.ReactNode }) {
+  return (
+    <thead className="border-b border-mwc-border bg-mwc-surface">
+      {children}
+    </thead>
+  );
+}
+
+export function TBody({ children }: { children: React.ReactNode }) {
+  return <tbody className="divide-y divide-mwc-border">{children}</tbody>;
+}
+
+export function Tr({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <tr className={cn("bg-white transition-ui hover:bg-mwc-surface", className)}>
+      {children}
+    </tr>
+  );
+}
+
+const alignClass = {
+  left: "text-left",
+  right: "text-right",
+  center: "text-center",
+} as const;
+
+export function Th({
+  children,
+  align = "left",
+  className,
+}: {
+  children: React.ReactNode;
+  align?: keyof typeof alignClass;
+  className?: string;
+}) {
+  return (
+    <th
+      scope="col"
+      className={cn(
+        "whitespace-nowrap px-4 py-3 text-caption font-semibold uppercase tracking-wide text-muted-foreground",
+        alignClass[align],
+        className
+      )}
+    >
+      {children}
+    </th>
+  );
+}
+
+export function Td({
+  children,
+  align = "left",
+  numeric = false,
+  muted = false,
+  className,
+}: {
+  children: React.ReactNode;
+  align?: keyof typeof alignClass;
+  numeric?: boolean;
+  muted?: boolean;
+  className?: string;
+}) {
+  return (
+    <td
+      className={cn(
+        "px-4 py-3.5 align-middle",
+        alignClass[align],
+        numeric && "numeric tabular-nums",
+        muted && "text-muted-foreground",
+        className
+      )}
+    >
+      {children}
+    </td>
+  );
+}

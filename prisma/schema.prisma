@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum Assembly {
+  ENGLISH
+  LOCAL
+}
+
+enum MemberStatus {
+  MEMBER
+  OFFICER
+}
+
+enum LogType {
+  LOGIN
+  EXPORT_SINGLE
+  EXPORT_BULK
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  password  String
+  createdAt DateTime   @default(now())
+  members   Member[]   @relation("CreatedByUser")
+  logs      AuditLog[]
+}
+
+model Member {
+  id           String       @id @default(cuid())
+  firstName    String
+  lastName     String
+  otherNames   String?
+  sex          Sex
+  assembly     Assembly
+  contact      String?
+  photoUrl     String?
+  location     String?
+  motherName   String?
+  fatherName   String?
+  position     String?
+  status       MemberStatus @default(MEMBER)
+  dateBaptised DateTime?
+  baptisedBy   String?
+  createdById  String?
+  createdBy    User?        @relation("CreatedByUser", fields: [createdById], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([assembly])
+  @@index([lastName, firstName])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  type       LogType
+  targetInfo String?
+  createdAt  DateTime @default(now())
+
+  @@index([type])
+  @@index([createdAt])
+}

@@ -1,0 +1,4 @@
+# This file should be a valid Prisma Migrate lock file.
+# Learn more: https://pris.ly/d/migrate-lock
+
+provider = "postgresql"

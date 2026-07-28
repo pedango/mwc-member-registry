@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,12 +9,93 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      spacing: {
+        4.5: "1.125rem",
+        13: "3.25rem",
+        15: "3.75rem",
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        mwc: {
+          blue: "#2E3192",
+          gold: "#F9C440",
+          goldBright: "#FFDD00",
+          ink: "#111111",
+          surface: "#F7F8FA",
+          border: "#E5E7EB",
+          muted: "#6B7280",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: [
+          "var(--font-inter)",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
+      },
+      fontSize: {
+        /* Type scale (~4 roles): caption → body → section → title */
+        caption: ["0.8125rem", { lineHeight: "1.35", fontWeight: "500" }], // 13px
+        body: ["0.9375rem", { lineHeight: "1.5", fontWeight: "400" }], // 15px
+        section: ["1.1875rem", { lineHeight: "1.35", fontWeight: "600" }], // 19px
+        title: ["1.75rem", { lineHeight: "1.25", fontWeight: "700" }], // 28px
+      },
+      boxShadow: {
+        glass: "0 8px 32px rgba(46, 49, 146, 0.18)",
+        card: "0 1px 2px rgba(17, 17, 17, 0.04), 0 1px 3px rgba(17, 17, 17, 0.06)",
+        cardHover:
+          "0 2px 4px rgba(17, 17, 17, 0.04), 0 8px 16px -6px rgba(46, 49, 146, 0.12)",
+      },
+      transitionDuration: {
+        ui: "150ms",
+      },
+      minHeight: {
+        touch: "44px",
+      },
+      minWidth: {
+        touch: "44px",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
+
 export default config;

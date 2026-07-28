@@ -2,26 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Neutrals */
+    --background: 220 20% 97%; /* #F7F8FA */
+    --foreground: 0 0% 7%; /* #111111 */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+
+    /* Primary = royal blue */
+    --primary: 238 52% 38%; /* #2E3192 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 16% 94%;
+    --secondary-foreground: 238 52% 30%;
+    --muted: 220 16% 94%;
+    --muted-foreground: 220 9% 46%; /* ~#6B7280 / gray-500 */
+    --accent: 220 16% 94%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%; /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 238 52% 38%;
+    --radius: 0.5rem;
+
+    /* Brand tokens */
+    --mwc-blue: #2e3192;
+    --mwc-gold: #f9c440;
+    --mwc-gold-bright: #ffdd00;
+    --mwc-ink: #111111;
+    --mwc-surface: #f7f8fa;
+    --mwc-border: #e5e7eb;
+    --mwc-muted: #6b7280;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background font-sans text-body text-foreground antialiased;
+  }
+
+  h1 {
+    @apply text-title font-bold tracking-tight text-mwc-blue;
+  }
+
+  h2 {
+    @apply text-section font-semibold text-mwc-blue;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl;
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Single source of truth for every elevated surface in the app. */
+  .surface {
+    @apply rounded-xl border border-mwc-border bg-white shadow-card;
+  }
+
+  .surface-interactive {
+    @apply rounded-xl border border-mwc-border bg-white shadow-card transition-all duration-150 ease-out hover:border-mwc-blue/25 hover:shadow-cardHover;
+  }
+
+  .type-title {
+    @apply text-title font-bold tracking-tight;
+  }
+
+  .type-section {
+    @apply text-section font-semibold;
+  }
+
+  .type-body {
+    @apply text-body font-normal leading-relaxed;
+  }
+
+  .type-caption {
+    @apply text-caption font-medium text-muted-foreground;
+  }
+
+  .label-caps {
+    @apply text-caption font-medium uppercase tracking-wide text-gray-500;
+  }
+
+  .glass-panel {
+    @apply border border-white/25 bg-white/15 shadow-glass backdrop-blur-xl;
+  }
+
+  .transition-ui {
+    @apply transition-all duration-150 ease-out;
+  }
+
+  .numeric {
+    @apply tabular-nums;
+    font-variant-numeric: tabular-nums;
   }
 }
