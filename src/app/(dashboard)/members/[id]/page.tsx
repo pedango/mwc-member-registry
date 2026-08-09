@@ -40,7 +40,7 @@ export default async function MemberProfilePage({
 
       <div className="surface overflow-hidden">
         <div className="flex flex-col gap-6 p-5 sm:flex-row sm:items-center md:p-6">
-          <div className="h-40 w-32 shrink-0 overflow-hidden rounded-lg border border-mwc-border bg-mwc-surface">
+          <div className="flex h-40 w-32 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/15 bg-primary/10">
             {member.photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -49,9 +49,9 @@ export default async function MemberProfilePage({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-2xl font-semibold text-mwc-blue/40">
+              <span className="text-2xl font-semibold text-primary">
                 {initials(name)}
-              </div>
+              </span>
             )}
           </div>
 
@@ -98,7 +98,7 @@ export default async function MemberProfilePage({
           </div>
         </div>
 
-        <div className="border-t border-mwc-border bg-mwc-surface/60 px-5 py-3 type-caption md:px-6">
+        <div className="border-t border-border bg-muted/50 px-5 py-3 type-caption md:px-6">
           Added {formatDate(member.createdAt)} by{" "}
           {member.createdBy?.name || member.createdBy?.email || "unknown"}
         </div>

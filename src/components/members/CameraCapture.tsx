@@ -67,9 +67,9 @@ export function CameraCapture({
         <button
           type="button"
           onClick={startCamera}
-          className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-mwc-border bg-mwc-surface/60 px-4 text-center transition-ui hover:border-mwc-blue/40 hover:bg-mwc-surface"
+          className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/60 px-4 text-center transition-ui hover:border-primary/40 hover:bg-muted"
         >
-          <span className="rounded-md bg-white p-2.5 text-mwc-blue shadow-sm">
+          <span className="rounded-xl bg-card p-2.5 text-primary shadow-sm">
             <Camera className="h-5 w-5" aria-hidden="true" />
           </span>
           <span className="text-sm font-medium text-foreground">
@@ -83,7 +83,7 @@ export function CameraCapture({
         <div className="space-y-3">
           <video
             ref={videoRef}
-            className="aspect-[4/5] w-full rounded-lg bg-mwc-ink object-cover"
+            className="aspect-[4/5] w-full rounded-xl bg-muted object-cover"
             playsInline
             muted
           />
@@ -109,7 +109,7 @@ export function CameraCapture({
           <img
             src={preview}
             alt="Captured preview"
-            className="aspect-[4/5] w-full rounded-lg border border-mwc-border object-cover"
+            className="aspect-[4/5] w-full rounded-xl border border-border object-cover"
           />
           <div className="flex gap-2">
             <Button

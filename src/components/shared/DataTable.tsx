@@ -37,14 +37,14 @@ export function DataTable({
 
 export function THead({ children }: { children: React.ReactNode }) {
   return (
-    <thead className="border-b border-mwc-border bg-mwc-surface">
+    <thead className="sticky top-0 z-10 border-b border-border bg-muted/80 backdrop-blur-sm">
       {children}
     </thead>
   );
 }
 
 export function TBody({ children }: { children: React.ReactNode }) {
-  return <tbody className="divide-y divide-mwc-border">{children}</tbody>;
+  return <tbody className="divide-y divide-border">{children}</tbody>;
 }
 
 export function Tr({
@@ -55,7 +55,12 @@ export function Tr({
   className?: string;
 }) {
   return (
-    <tr className={cn("bg-white transition-ui hover:bg-mwc-surface", className)}>
+    <tr
+      className={cn(
+        "bg-card transition-ui hover:bg-muted/60",
+        className
+      )}
+    >
       {children}
     </tr>
   );
@@ -80,7 +85,7 @@ export function Th({
     <th
       scope="col"
       className={cn(
-        "whitespace-nowrap px-4 py-3 text-caption font-semibold uppercase tracking-wide text-muted-foreground",
+        "whitespace-nowrap px-4 py-3.5 text-caption font-semibold uppercase tracking-wide text-muted-foreground",
         alignClass[align],
         className
       )}

@@ -67,7 +67,7 @@ export default async function AssembliesPage({
               className={cn(
                 "group flex items-start justify-between gap-4 p-5 transition-ui",
                 isSelected
-                  ? "surface border-mwc-blue ring-1 ring-mwc-blue"
+                  ? "surface border-primary ring-1 ring-primary"
                   : "surface-interactive"
               )}
             >
@@ -75,7 +75,7 @@ export default async function AssembliesPage({
                 <p className="label-caps">{item.label}</p>
                 <Numeric
                   as="p"
-                  className="mt-2 text-4xl font-bold leading-none tracking-tight text-mwc-ink"
+                  className="mt-2 text-4xl font-bold leading-none tracking-tight text-foreground"
                 >
                   {item.count}
                 </Numeric>
@@ -88,10 +88,10 @@ export default async function AssembliesPage({
 
               <span
                 className={cn(
-                  "rounded-full p-2 transition-ui",
+                  "rounded-xl p-2 transition-ui",
                   isSelected
-                    ? "bg-mwc-blue text-white"
-                    : "bg-mwc-blue/10 text-mwc-blue"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-primary/10 text-primary"
                 )}
               >
                 {isSelected ? (
@@ -135,7 +135,7 @@ export default async function AssembliesPage({
               />
             </div>
           ) : (
-            <TableScroller className="border-t border-mwc-border">
+            <TableScroller className="border-t border-border">
               <DataTable minWidth={560}>
                 <THead>
                   <tr>

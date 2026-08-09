@@ -49,21 +49,21 @@ export default async function UsersPage() {
             />
           </div>
         ) : (
-          <TableScroller className="border-t border-mwc-border">
+          <TableScroller className="border-t border-border">
             <DataTable minWidth={640}>
               <THead>
                 <tr>
-                  <Th>Administrator</Th>
-                  <Th align="right">Members added</Th>
-                  <Th align="right">Audit events</Th>
-                  <Th align="right">Joined</Th>
+                  <Th align="center">Administrator</Th>
+                  <Th align="center">Members added</Th>
+                  <Th align="center">Audit events</Th>
+                  <Th align="center">Joined</Th>
                 </tr>
               </THead>
               <TBody>
                 {users.map((u) => (
                   <Tr key={u.id}>
-                    <Td>
-                      <div className="flex items-center gap-3">
+                    <Td align="center">
+                      <div className="inline-flex items-center justify-center gap-3 text-left">
                         <Avatar name={u.name || u.email} />
                         <div className="min-w-0">
                           <p className="truncate font-medium text-foreground">
@@ -73,13 +73,13 @@ export default async function UsersPage() {
                         </div>
                       </div>
                     </Td>
-                    <Td align="right" numeric>
+                    <Td align="center" numeric>
                       {u._count.members}
                     </Td>
-                    <Td align="right" numeric>
+                    <Td align="center" numeric>
                       {u._count.logs}
                     </Td>
-                    <Td align="right" numeric muted>
+                    <Td align="center" numeric muted>
                       {formatDate(u.createdAt)}
                     </Td>
                   </Tr>

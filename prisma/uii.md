@@ -1,96 +1,43 @@
-# Cursor AI Prompt — Typography / Font Implementation for MWC Church Management System
+# Cursor AI Prompt — Login Screen Logo Sizing & Final Polish for MWC Church Management System
 
-## Goal
+## Context
 
-Implement a consistent, professional typography system across the entire MWC (Mamprobi Worship Center) Church Management System using **Inter** as the primary typeface. The app is an admin-only data-management tool, so the priorities are legibility at small sizes, clean number rendering in tables and stat cards, and a neutral, professional feel. Do not add new features — this is a typography/styling pass only.
+Refine the **login screen** further. The overall structure (church photo left panel with name + tagline, form right panel) is working well. This pass focuses specifically on the **MWC logo's size and position**, plus a few remaining alignment/spacing issues on the right panel. Do NOT add features; this is layout/sizing/spacing refinement only.
 
-## Font Choice
+## 1. Logo size and position
 
-- **Primary (and only) typeface:** Inter — used across the whole app for both headings and body/data.
-- Load it via `next/font/google` for optimal performance (self-hosted, no layout shift, `display: swap`).
-- Fallback stack: `system-ui, -apple-system, sans-serif`.
+**Problem:** The logo is currently oversized and floats disconnected from the rest of the content — there's a large empty gap above it and another large gap between it and the "Sign in" heading, making the logo and the form read as two separate zones rather than one cohesive intro block. Its width is also disproportionate to the narrower form beneath it.
 
-## Implementation Steps
+**Fix:**
+- Reduce the logo's size to roughly 60–70% of its current rendered width/height — it should read as a supporting brand mark introducing the form, not compete with "Sign in" as the dominant element.
+- Treat the logo + heading + subtext as **one connected intro block**: reduce the vertical gap between the logo and "Sign in" so they feel grouped together (use the same tight spacing you'd use between a label and its input — proximity implies relationship).
+- Keep the logo horizontally centered above the heading.
+- Re-balance the overall vertical space: with the smaller logo, redistribute the freed-up space so the whole content block (logo → heading → form → footer note) is **vertically centered** within the right panel, rather than sitting high with excess empty space at the bottom.
 
-### 1. Load Inter in the root layout
+## 2. Alignment consistency
 
-In `src/app/layout.tsx`:
+**Problem:** The heading ("Sign in") and subtext ("Manage church member records") are center-aligned, but the Email/Password labels are left-aligned. Mixing alignment axes in the same column reads as inconsistent.
 
-```tsx
-import { Inter } from "next/font/google";
+**Fix:** Pick one alignment strategy for the whole form block and apply it consistently:
+- **Recommended:** Keep the heading/subtext centered (they introduce the form), but the actual form fields (labels + inputs) should be left-aligned within a centered column — this is the standard, most usable pattern for forms and is fine as a deliberate contrast between "intro" (centered) and "form" (left-aligned). If keeping this pattern, ensure the email/password block as a *unit* is horizontally centered as a column, with labels/inputs left-aligned *within* that column — so the column's left edge and the button's left edge line up exactly.
+- Verify the input fields and the "Sign in" button share identical width and left/right edges — confirm this alignment is pixel-consistent (it looks close but should be verified).
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+## 3. Theme toggle placement
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className={inter.variable}>
-      <body className="font-sans antialiased">{children}</body>
-    </html>
-  );
-}
-```
+- The dark/light toggle (top-right) currently floats in isolation. Keep it in the top-right corner (that's a fine, expected location) but ensure it has a comfortable, consistent margin from the edges matching the rest of the page's spacing scale, and add an accessible `aria-label` ("Toggle dark mode"). No need to relocate it — just tighten its spacing relationship to the panel edges.
 
-### 2. Set Inter as the default sans font in Tailwind
+## 4. General spacing pass
 
-In `tailwind.config.ts`:
-
-```ts
-import type { Config } from "tailwindcss";
-
-const config: Config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
-      },
-    },
-  },
-};
-
-export default config;
-```
-
-Ensure `antialiased` is applied globally (on `body`) for crisper rendering.
-
-### 3. Define a consistent type scale
-
-Standardize typography so no more than ~4 active text sizes/roles are used. Apply these consistently across all pages via reusable classes or component styles:
-
-- **Page title (h1):** ~24–30px, font-semibold/bold, tight leading
-- **Section heading (h2):** ~18–20px, font-semibold
-- **Body / data:** ~14–16px, font-normal, leading-relaxed (~1.5)
-- **Label / caption:** ~12–13px, font-medium, muted gray (`text-gray-500`), often uppercase with slight letter-spacing for form field labels
-
-Use **weight and size** to signal hierarchy — not color alone. Keep body text at a comfortable line-height (~1.5) and ensure WCAG AA contrast throughout.
-
-### 4. Tabular numbers for aligned data (important)
-
-Enable tabular (monospaced) figures wherever numbers appear in columns or need to align — member tables, stat cards, counts, pagination, logs. This keeps digits vertically aligned and improves scannability.
-
-- Add the Tailwind `tabular-nums` utility class to:
-  - Table cells containing numbers
-  - Dashboard stat-card numbers
-  - Assembly counts and member counts
-  - Any numeric/date columns in logs
-- Equivalent CSS: `font-variant-numeric: tabular-nums;`
-
-Optionally create a small utility or component (e.g. a `<Stat>` or `<NumericCell>` wrapper) that applies `tabular-nums` so it stays consistent.
-
-### 5. Apply consistently everywhere
-
-Roll the type scale and font across **every existing page**: login, dashboard, members list, member profile, add/edit member form, assemblies, bulk upload, users, and logs. Refactor existing components to use the standardized classes rather than one-off inline font sizes. Centralize where possible so the system stays consistent.
+- Recheck the spacing scale between: logo → heading, heading → subtext, subtext → Email field, Email → Password, Password → button, button → footer note. Use a consistent, deliberate scale (e.g. tighter within the intro block, slightly more room before the button, and a clear but not excessive gap before the footer note).
+- Ensure the entire right-panel content block (logo through footer note) is capped at a comfortable max-width (~420–460px) and centered within the panel both horizontally and vertically.
 
 ## Constraints
 
-- Use **Inter only** — do not introduce a second font family.
-- Do not add new features, pages, or colors.
-- Keep changes to typography, font loading, and number rendering.
-- Produce clean, production-ready TypeScript/React.
+- No new features — layout, sizing, and spacing refinement only.
+- Keep the left panel (church photo, name, tagline, gold accent bar) as-is — it's working well.
+- Keep existing colors/tokens from prior passes; this prompt is about sizing/position/alignment, not color.
+- Clean, production-ready TypeScript/React.
 
 ## Deliverable
 
-Inter loaded via `next/font`, set as the Tailwind default sans, a consistent type scale applied app-wide, and `tabular-nums` applied to all numeric/tabular data. Note any reusable helpers created (e.g. a numeric cell or stat component).
+A login screen where the logo is appropriately sized and tightly grouped with the "Sign in" heading as one cohesive intro block, the full right-panel content is vertically centered within the panel, form alignment is consistent and pixel-accurate, and spacing throughout follows a deliberate, consistent scale.

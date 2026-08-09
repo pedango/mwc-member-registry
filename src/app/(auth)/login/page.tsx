@@ -3,7 +3,13 @@ import LoginClient from "./login-client";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-mwc-blue" />}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-dvh items-center justify-center bg-background">
+          <div className="h-8 w-8 animate-pulse rounded-full bg-primary/20" />
+        </div>
+      }
+    >
       <LoginClient />
     </Suspense>
   );

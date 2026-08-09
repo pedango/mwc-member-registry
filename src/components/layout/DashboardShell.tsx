@@ -16,12 +16,12 @@ export function DashboardShell({
 
   return (
     <SessionProvider>
-      <div className="flex h-dvh overflow-hidden bg-mwc-surface">
+      <div className="flex h-dvh overflow-hidden bg-background">
         <Sidebar open={open} onClose={() => setOpen(false)} />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <Header userName={userName} onMenuClick={() => setOpen(true)} />
           <main className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-10 md:px-6 md:py-8 lg:px-8">
-            <div className="page-shell space-y-6">{children}</div>
+            <div className="page-shell space-y-8">{children}</div>
           </main>
         </div>
       </div>

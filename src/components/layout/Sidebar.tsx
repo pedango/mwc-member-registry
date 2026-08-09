@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/shared/Logo";
 
 const navGroups = [
   {
@@ -43,7 +44,7 @@ export function Sidebar({
     <>
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-mwc-ink/40 transition-ui lg:hidden",
+          "fixed inset-0 z-40 bg-sidebar-overlay/40 transition-ui lg:hidden",
           open ? "opacity-100" : "pointer-events-none opacity-0"
         )}
         onClick={onClose}
@@ -51,31 +52,30 @@ export function Sidebar({
       />
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-dvh w-64 shrink-0 flex-col bg-mwc-blue text-white transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex h-dvh w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
         aria-label="Main navigation"
       >
-        <div className="flex h-16 items-center justify-between gap-3 border-b border-white/10 px-4">
+        <div className="flex h-16 items-center justify-between gap-3 border-b border-white/10 px-3">
           <Link
             href="/"
-            className="flex min-h-touch items-center gap-3 rounded-md focus-visible:ring-offset-mwc-blue"
+            className="flex min-h-touch min-w-0 items-center gap-2.5 rounded-lg focus-visible:ring-offset-sidebar"
             onClick={onClose}
+            aria-label="MWC Member Registry System — Dashboard"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logos/mwc-logo.png"
-              alt="Mamprobi Worship Center"
-              className="h-9 w-9 rounded-md object-cover"
+            <Logo
+              variant="on-dark"
+              alt=""
+              className="h-7 w-auto max-w-[72px] shrink-0"
             />
-            <div>
-              <p className="text-sm font-bold leading-tight">MWC</p>
-              <p className="type-caption text-white/65">Church Management</p>
-            </div>
+            <span className="min-w-0 text-[11px] font-semibold leading-tight tracking-wide text-white">
+              MWC Member Registry System
+            </span>
           </Link>
           <button
             type="button"
-            className="inline-flex min-h-touch min-w-touch items-center justify-center rounded-md hover:bg-white/10 lg:hidden"
+            className="inline-flex min-h-touch min-w-touch items-center justify-center rounded-lg hover:bg-white/10 lg:hidden"
             onClick={onClose}
             aria-label="Close menu"
           >
@@ -94,7 +94,7 @@ export function Sidebar({
                   {group.label}
                 </p>
               ) : null}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {group.items.map((item) => {
                   const active =
                     item.href === "/"
@@ -108,15 +108,15 @@ export function Sidebar({
                       onClick={onClose}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "relative flex min-h-touch items-center gap-3 overflow-hidden rounded-md px-3 py-2.5 text-sm font-medium transition-ui",
+                        "relative flex min-h-touch items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-sm font-medium transition-ui",
                         active
-                          ? "bg-white/15 text-white"
+                          ? "bg-white/15 text-white shadow-sm"
                           : "text-white/75 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       {active ? (
                         <span
-                          className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-mwc-goldBright"
+                          className="absolute inset-y-1.5 left-0 w-1 rounded-r-full bg-gold-bright"
                           aria-hidden="true"
                         />
                       ) : null}
@@ -131,9 +131,9 @@ export function Sidebar({
         </nav>
 
         <div className="border-t border-white/10 px-4 py-4 type-caption text-white/55">
-          Mamprobi Worship Center
+          <span className="font-bold text-white/80">Mamprobi Worship Center</span>
           <br />
-          A Citadel of Divine Glory
+          <span className="italic">A Citadel of Divine Glory</span>
         </div>
       </aside>
     </>

@@ -6,7 +6,7 @@ export function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-mwc-border/70", className)}
+      className={cn("skeleton-shimmer rounded-lg", className)}
       {...props}
     />
   );
@@ -15,10 +15,10 @@ export function Skeleton({
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <div className="surface overflow-hidden">
-      <div className="border-b border-mwc-border bg-mwc-surface px-4 py-3.5">
+      <div className="border-b border-border bg-muted/60 px-4 py-3.5">
         <Skeleton className="h-3.5 w-40" />
       </div>
-      <div className="divide-y divide-mwc-border">
+      <div className="divide-y divide-border">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="flex items-center gap-4 px-4 py-4">
             <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
@@ -37,7 +37,7 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
 
 export function StatSkeleton() {
   return (
-    <div className="surface p-5">
+    <div className="surface p-6">
       <Skeleton className="h-3 w-24" />
       <Skeleton className="mt-3 h-9 w-16" />
       <Skeleton className="mt-3 h-3 w-20" />

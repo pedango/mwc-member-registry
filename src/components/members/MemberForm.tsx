@@ -158,9 +158,9 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
         className="grid items-start gap-6 lg:grid-cols-[320px_minmax(0,1fr)]"
       >
         <aside className="space-y-4 lg:sticky lg:top-6">
-          <div className="overflow-hidden rounded-xl border border-mwc-blue/20 bg-[linear-gradient(155deg,#2E3192_0%,#282b7d_55%,#1a1c5c_100%)] p-5 text-white shadow-card">
+          <div className="brand-panel overflow-hidden rounded-xl p-5">
             <div className="flex items-center gap-4">
-              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/25">
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-primary-foreground/10 ring-1 ring-primary-foreground/25">
                 {photoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -169,7 +169,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-white/50">
+                  <div className="flex h-full items-center justify-center bg-primary-foreground/10 text-primary-foreground/70">
                     <UserRound className="h-8 w-8" aria-hidden="true" />
                   </div>
                 )}
@@ -210,7 +210,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                 aria-label="Details filled"
               >
                 <div
-                  className="h-full rounded-full bg-mwc-gold transition-all duration-300"
+                  className="h-full rounded-full bg-gold transition-all duration-300"
                   style={{ width: `${completeness}%` }}
                 />
               </div>
@@ -219,15 +219,15 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
 
           <div className="surface p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="type-section text-mwc-blue">Photo</h2>
-              <div className="inline-flex rounded-md border border-mwc-border bg-mwc-surface p-0.5">
+              <h2 className="type-section text-primary">Photo</h2>
+              <div className="inline-flex rounded-xl border border-border bg-muted p-0.5">
                 <button
                   type="button"
                   onClick={() => setPhotoMode("upload")}
                   className={cn(
                     "inline-flex items-center gap-1.5 rounded px-2.5 py-1.5 text-caption font-medium transition-ui",
                     photoMode === "upload"
-                      ? "bg-white text-mwc-blue shadow-sm"
+                      ? "bg-card text-primary shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                   aria-pressed={photoMode === "upload"}
@@ -241,7 +241,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                   className={cn(
                     "inline-flex items-center gap-1.5 rounded px-2.5 py-1.5 text-caption font-medium transition-ui",
                     photoMode === "camera"
-                      ? "bg-white text-mwc-blue shadow-sm"
+                      ? "bg-card text-primary shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                   aria-pressed={photoMode === "camera"}
@@ -397,7 +397,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
 
         {/* Sticky inside the content column so it can never drift out of
             alignment with the form the way a viewport-fixed bar does. */}
-        <div className="sticky bottom-0 z-20 -mb-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-mwc-border bg-white/95 px-4 py-3 shadow-cardHover backdrop-blur lg:col-span-2">
+        <div className="sticky bottom-0 z-20 -mb-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card/95 px-4 py-3 shadow-md backdrop-blur lg:col-span-2">
           <p className="type-caption">
             Fields marked <span className="text-destructive">*</span> are
             required
@@ -466,11 +466,11 @@ function FormSection({
 }) {
   return (
     <section className="surface overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-mwc-border bg-mwc-surface/70 px-5 py-3.5">
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-mwc-blue/10 text-mwc-blue">
+      <div className="flex items-center gap-3 border-b border-border bg-muted/70 px-5 py-3.5">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <Icon className="h-4 w-4" aria-hidden="true" />
         </span>
-        <h2 className="type-section text-mwc-blue">
+        <h2 className="type-section text-primary">
           <span className="numeric mr-2 text-muted-foreground">{step}.</span>
           {title}
         </h2>

@@ -118,8 +118,8 @@ export default function BulkPage() {
               />
 
               {file ? (
-                <div className="flex items-center gap-3 rounded-lg border border-mwc-border bg-mwc-surface/60 p-4">
-                  <span className="rounded-full bg-white p-2 text-mwc-blue shadow-sm">
+                <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/60 p-4">
+                  <span className="rounded-xl bg-card p-2 text-primary shadow-sm">
                     <FileSpreadsheet className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -144,9 +144,9 @@ export default function BulkPage() {
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  className="flex w-full flex-col items-center gap-2 rounded-lg border-2 border-dashed border-mwc-border bg-mwc-surface/50 px-6 py-10 text-center transition-ui hover:border-mwc-blue/40 hover:bg-mwc-surface"
+                  className="flex w-full flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/50 px-6 py-10 text-center transition-ui hover:border-primary/40 hover:bg-muted"
                 >
-                  <span className="rounded-full bg-white p-3 text-mwc-blue shadow-sm">
+                  <span className="rounded-xl bg-card p-3 text-primary shadow-sm">
                     <Upload className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-sm font-medium text-foreground">
@@ -271,13 +271,13 @@ function ResultTile({
 }) {
   const toneClass =
     tone === "success"
-      ? "border-emerald-200 bg-emerald-50/70 text-emerald-800"
+      ? "border-transparent bg-success-soft text-success-soft-fg"
       : tone === "danger"
-        ? "border-red-200 bg-red-50/70 text-red-800"
-        : "border-mwc-border bg-mwc-surface/60 text-foreground";
+        ? "border-transparent bg-destructive/10 text-destructive"
+        : "border-border bg-muted/60 text-foreground";
 
   return (
-    <div className={`rounded-lg border p-4 ${toneClass}`}>
+    <div className={`rounded-xl border p-4 ${toneClass}`}>
       <p className="text-caption font-medium uppercase tracking-wide opacity-80">
         {label}
       </p>

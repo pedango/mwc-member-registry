@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, Pencil, Trash2, Search, Users, X } from "lucide-react";
+import { CircleUser, Pencil, Trash2, Search, Users, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,7 +108,7 @@ export function MembersTable({
               <button
                 type="button"
                 onClick={() => updateQuery({ q: null, page: null })}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-ui hover:bg-mwc-surface hover:text-foreground"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-ui hover:bg-muted hover:text-foreground"
                 aria-label="Clear search"
               >
                 <X className="h-4 w-4" />
@@ -161,12 +161,12 @@ export function MembersTable({
             <DataTable minWidth={760}>
               <THead>
                 <tr>
-                  <Th>Member</Th>
-                  <Th>Assembly</Th>
-                  <Th>Status</Th>
-                  <Th>Contact</Th>
-                  <Th align="right">Added</Th>
-                  <Th align="right">Actions</Th>
+                  <Th align="center">Member</Th>
+                  <Th align="center">Assembly</Th>
+                  <Th align="center">Status</Th>
+                  <Th align="center">Contact</Th>
+                  <Th align="center">Added</Th>
+                  <Th align="center">Actions</Th>
                 </tr>
               </THead>
               <TBody>
@@ -174,10 +174,10 @@ export function MembersTable({
                   const name = fullName(m);
                   return (
                     <Tr key={m.id}>
-                      <Td>
+                      <Td align="center">
                         <Link
                           href={`/members/${m.id}`}
-                          className="flex items-center gap-3 rounded-md"
+                          className="inline-flex items-center justify-center gap-3 rounded-md"
                         >
                           <Avatar src={m.photoUrl} name={name} />
                           <span className="font-medium text-foreground">
@@ -185,26 +185,28 @@ export function MembersTable({
                           </span>
                         </Link>
                       </Td>
-                      <Td>
+                      <Td align="center">
                         <AssemblyBadge assembly={m.assembly} />
                       </Td>
-                      <Td>
+                      <Td align="center">
                         <StatusBadge status={m.status} />
                       </Td>
-                      <Td muted>{m.contact || "—"}</Td>
-                      <Td align="right" numeric muted>
+                      <Td align="center" muted>
+                        {m.contact || "—"}
+                      </Td>
+                      <Td align="center" numeric muted>
                         {formatDate(m.createdAt)}
                       </Td>
-                      <Td align="right">
-                        <div className="flex justify-end gap-0.5">
+                      <Td align="center">
+                        <div className="inline-flex justify-center gap-0.5">
                           <Button
                             asChild
                             size="icon"
                             variant="ghost"
-                            aria-label={`View ${name}`}
+                            aria-label={`View profile for ${name}`}
                           >
                             <Link href={`/members/${m.id}`}>
-                              <Eye className="h-4 w-4" />
+                              <CircleUser className="h-4 w-4" />
                             </Link>
                           </Button>
                           <Button
@@ -258,7 +260,7 @@ export function MembersTable({
             </DataTable>
           </TableScroller>
 
-          <div className="border-t border-mwc-border bg-mwc-surface/60 px-4 py-3">
+          <div className="border-t border-border bg-muted/50 px-4 py-3">
             <Pagination
               page={page}
               pageSize={pageSize}

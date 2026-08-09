@@ -28,10 +28,10 @@ export function PageHeader({
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-1.5">
-          <h1 className="type-title text-mwc-blue">{title}</h1>
+          <h1 className="type-title text-primary">{title}</h1>
           {accent ? (
             <span
-              className="block h-1 w-12 rounded-full bg-mwc-gold"
+              className="block h-1 w-12 rounded-full bg-gold"
               aria-hidden="true"
             />
           ) : null}
@@ -63,14 +63,14 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
               className="flex min-w-0 items-center gap-1.5"
             >
               {index > 0 ? (
-                <span className="text-mwc-border" aria-hidden="true">
+                <span className="text-border" aria-hidden="true">
                   /
                 </span>
               ) : null}
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
-                  className="rounded transition-ui hover:text-mwc-blue focus-visible:text-mwc-blue"
+                  className="rounded transition-ui hover:text-primary focus-visible:text-primary"
                 >
                   {item.label}
                 </Link>

@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/shared/Logo";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 export default function LoginClient() {
   const router = useRouter();
@@ -14,10 +17,13 @@ export default function LoginClient() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setLoading(true);
     try {
       const result = await signIn("credentials", {
@@ -27,7 +33,7 @@ export default function LoginClient() {
       });
 
       if (result?.error) {
-        toast.error("Invalid email or password");
+        setError("Invalid email or password");
         return;
       }
 
@@ -35,81 +41,165 @@ export default function LoginClient() {
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      toast.error("Unable to sign in. Please try again.");
+      setError("Unable to sign in. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
-      <div className="absolute inset-0 bg-[linear-gradient(145deg,#1a1c5c_0%,#2E3192_50%,#12143f_100%)]" />
-      <div className="absolute inset-0 opacity-30 bg-[radial-gradient(rgba(255,255,255,0.1)_1px,transparent_1px)] [background-size:20px_20px]" />
-      <div className="absolute -left-20 top-16 h-64 w-64 rounded-full bg-mwc-gold/20 blur-3xl" />
+    <div className="relative flex min-h-dvh flex-col bg-background lg:flex-row">
+      <div className="absolute right-6 top-6 z-20 sm:right-8 sm:top-8 lg:right-10 lg:top-8">
+        <ThemeToggle
+          aria-label="Toggle dark mode"
+          className="rounded-xl border border-border bg-card/80 shadow-sm backdrop-blur"
+        />
+      </div>
 
-      <div className="relative z-10 w-full max-w-md">
-        <div className="glass-panel rounded-2xl p-8 text-white">
-          <div className="mb-8 flex flex-col items-start text-left">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logos/mwc-logo.png"
-              alt="Mamprobi Worship Center"
-              className="mb-5 h-20 w-20 rounded-xl object-cover shadow-lg ring-1 ring-white/20"
+      {/* Left panel — leave structure as-is */}
+      <aside className="relative h-44 w-full shrink-0 overflow-hidden sm:h-52 lg:h-auto lg:min-h-dvh lg:w-[48%]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logos/mwc-building.jpg"
+          alt="Mamprobi Worship Center church building"
+          className="absolute inset-0 h-full w-full object-cover object-[center_30%] lg:object-[center_35%]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-sidebar/90 via-sidebar/30 to-transparent" />
+
+        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 lg:p-8 xl:p-10">
+          <div className="max-w-sm">
+            <span
+              className="mb-3 block h-1 w-10 rounded-full bg-gold sm:mb-4 sm:w-12"
+              aria-hidden="true"
             />
-            <h1 className="type-title text-white">
+            <p className="text-lg font-bold leading-snug tracking-tight text-white sm:text-xl lg:text-2xl xl:text-[1.75rem]">
               Mamprobi Worship Center
+            </p>
+            <p className="mt-1 text-sm font-normal text-white/80 sm:mt-1.5 lg:text-[0.9375rem]">
+              A Citadel of Divine Glory
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      {/* Right panel — content block vertically + horizontally centered */}
+      <main className="flex flex-1 flex-col justify-center bg-gradient-to-b from-background to-muted/40 px-6 py-12 sm:px-10 lg:px-14 xl:px-20">
+        <div className="mx-auto w-full max-w-[440px]">
+          {/* Intro block: logo + heading grouped tightly */}
+          <div className="mb-6 flex flex-col items-center text-center">
+            <Logo
+              alt="Mamprobi Worship Center"
+              className="mb-3 h-auto w-[42%] max-w-[152px]"
+            />
+            <h1 className="text-title font-bold tracking-tight text-primary">
+              Sign in
             </h1>
-            <p className="type-body mt-2 text-white/75">
-              Sign in to manage church member records
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Manage church member records
             </p>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-4" noValidate>
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-white/90">
+          {/* Form: left-aligned labels/inputs inside the centered column */}
+          <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-foreground"
+              >
                 Email
               </Label>
               <Input
                 id="email"
                 type="email"
                 autoComplete="email"
+                autoFocus
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border-white/30 bg-white text-mwc-ink"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (error) setError(null);
+                }}
+                className="h-11 w-full"
                 placeholder="admin@mwc.org"
+                aria-invalid={!!error}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-white/90">
+
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-foreground"
+              >
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="border-white/30 bg-white text-mwc-ink"
-                placeholder="••••••••"
-              />
+              <div className="relative w-full">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  className="h-11 w-full pr-11"
+                  placeholder="••••••••"
+                  aria-invalid={!!error}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-1.5 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-ui hover:bg-muted hover:text-foreground"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
             </div>
+
+            <div
+              className="flex min-h-5 items-center gap-2"
+              role="alert"
+              aria-live="polite"
+            >
+              {error ? (
+                <>
+                  <AlertCircle
+                    className="h-4 w-4 shrink-0 text-destructive"
+                    aria-hidden="true"
+                  />
+                  <p className="text-sm text-destructive">{error}</p>
+                </>
+              ) : null}
+            </div>
+
             <Button
               type="submit"
-              className="w-full"
+              className="h-11 w-full text-[0.9375rem]"
               disabled={loading}
               aria-busy={loading}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign in"
+              )}
             </Button>
           </form>
 
-          <p className="mt-6 text-left type-caption text-white/55">
+          <p className="mt-6 text-center type-caption text-muted-foreground">
             Seeded administrators only. No public registration.
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

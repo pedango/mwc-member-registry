@@ -4,39 +4,153 @@
 
 @layer base {
   :root {
-    /* Neutrals */
-    --background: 220 20% 97%; /* #F7F8FA */
-    --foreground: 0 0% 7%; /* #111111 */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 7%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
+    /* Warm light neutrals */
+    --background: 40 20% 97%; /* #FAF9F7 */
+    --foreground: 30 8% 12%;
+    --card: 40 25% 99%;
+    --card-foreground: 30 8% 12%;
+    --popover: 40 25% 99%;
+    --popover-foreground: 30 8% 12%;
 
-    /* Primary = royal blue */
-    --primary: 238 52% 38%; /* #2E3192 */
+    /* Primary = exact church royal blue #2E3192 */
+    --primary: 238 52% 38%;
     --primary-foreground: 0 0% 100%;
+    --primary-50: 238 45% 96%;
+    --primary-100: 238 42% 92%;
+    --primary-200: 238 40% 80%;
+    --primary-700: 238 52% 30%;
+    --primary-900: 238 55% 22%;
 
-    --secondary: 220 16% 94%;
+    /* Soft UI accent (neutral hover surfaces — not gold) */
+    --secondary: 35 18% 93%;
     --secondary-foreground: 238 52% 30%;
-    --muted: 220 16% 94%;
-    --muted-foreground: 220 9% 46%; /* ~#6B7280 / gray-500 */
-    --accent: 220 16% 94%;
-    --accent-foreground: 0 0% 7%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%; /* #E5E7EB */
-    --input: 220 13% 91%;
-    --ring: 238 52% 38%;
-    --radius: 0.5rem;
+    --muted: 35 14% 93%;
+    --muted-foreground: 30 8% 42%;
+    --accent: 35 18% 93%;
+    --accent-foreground: 30 8% 12%;
 
-    /* Brand tokens */
-    --mwc-blue: #2e3192;
-    --mwc-gold: #f9c440;
-    --mwc-gold-bright: #ffdd00;
-    --mwc-ink: #111111;
-    --mwc-surface: #f7f8fa;
-    --mwc-border: #e5e7eb;
-    --mwc-muted: #6b7280;
+    /* Brand gold #F9C440 / #FFDD00 */
+    --gold: 43 94% 61%;
+    --gold-foreground: 30 12% 14%;
+    --gold-soft: 43 80% 92%;
+    --gold-soft-fg: 36 65% 28%;
+    --gold-bright: 52 100% 50%;
+
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 55% 32%;
+    --success-foreground: 0 0% 100%;
+    --success-soft: 152 40% 94%;
+    --success-soft-fg: 152 60% 24%;
+    --warning: 38 92% 42%;
+    --warning-foreground: 30 10% 12%;
+    --warning-soft: 42 90% 93%;
+    --warning-soft-fg: 32 80% 28%;
+    --info: 238 45% 42%;
+    --info-foreground: 0 0% 100%;
+    --info-soft: 238 45% 95%;
+    --info-soft-fg: 238 52% 32%;
+
+    --border: 30 12% 88%;
+    --input: 30 12% 88%;
+    --ring: 238 52% 38%;
+    --radius: 0.875rem;
+
+    /* Brand aliases (same channels as primary / gold) */
+    --mwc-blue: 238 52% 38%;
+    --mwc-gold: 43 94% 61%;
+    --mwc-gold-bright: 52 100% 50%;
+    --mwc-ink: 30 8% 12%;
+    --mwc-surface: 40 20% 97%;
+    --mwc-border: 30 12% 88%;
+    --mwc-muted: 30 8% 42%;
+
+    /* Sidebar = exact #2E3192 (not a purple drift) */
+    --sidebar: 238 52% 38%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-overlay: 30 8% 12%;
+
+    /* Branded panels always use true church blue (both themes) */
+    --brand-panel-from: 238 52% 38%;
+    --brand-panel-via: 238 52% 30%;
+    --brand-panel-to: 238 55% 22%;
+
+    --shadow-sm: 0 1px 2px hsl(30 8% 12% / 0.04), 0 1px 3px hsl(30 8% 12% / 0.05);
+    --shadow-md: 0 2px 4px hsl(30 8% 12% / 0.04), 0 8px 18px -8px hsl(238 52% 38% / 0.12);
+    --shadow-lg: 0 8px 28px -6px hsl(30 8% 12% / 0.14), 0 4px 10px hsl(238 52% 38% / 0.08);
+  }
+
+  .dark {
+    /* Warm charcoal surfaces */
+    --background: 30 10% 10%;
+    --foreground: 40 15% 96%;
+    --card: 30 9% 14%;
+    --card-foreground: 40 15% 96%;
+    --popover: 30 9% 15%;
+    --popover-foreground: 40 15% 96%;
+
+    /* Brighter primary for legibility on dark */
+    --primary: 238 48% 68%;
+    --primary-foreground: 238 55% 12%;
+    --primary-50: 238 28% 16%;
+    --primary-100: 238 26% 20%;
+    --primary-200: 238 30% 28%;
+    --primary-700: 238 50% 76%;
+    --primary-900: 238 45% 90%;
+
+    --secondary: 30 8% 18%;
+    --secondary-foreground: 40 15% 94%;
+    --muted: 30 8% 18%;
+    --muted-foreground: 30 8% 68%;
+    --accent: 30 8% 18%;
+    --accent-foreground: 40 15% 96%;
+
+    --gold: 43 92% 58%;
+    --gold-foreground: 30 12% 10%;
+    --gold-soft: 43 35% 18%;
+    --gold-soft-fg: 43 85% 72%;
+    --gold-bright: 52 100% 55%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 45% 42%;
+    --success-foreground: 0 0% 100%;
+    --success-soft: 152 30% 16%;
+    --success-soft-fg: 152 50% 72%;
+    --warning: 38 85% 50%;
+    --warning-foreground: 30 10% 10%;
+    --warning-soft: 38 40% 16%;
+    --warning-soft-fg: 42 80% 70%;
+    --info: 238 45% 68%;
+    --info-foreground: 238 55% 12%;
+    --info-soft: 238 30% 18%;
+    --info-soft-fg: 238 55% 78%;
+
+    --border: 30 8% 22%;
+    --input: 30 8% 22%;
+    --ring: 238 48% 68%;
+
+    --mwc-blue: 238 48% 68%;
+    --mwc-gold: 43 92% 58%;
+    --mwc-gold-bright: 52 100% 55%;
+    --mwc-ink: 40 15% 96%;
+    --mwc-surface: 30 10% 10%;
+    --mwc-border: 30 8% 22%;
+    --mwc-muted: 30 8% 68%;
+
+    /* Deep warm navy derived from brand blue — not cold near-black */
+    --sidebar: 238 40% 22%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-overlay: 30 10% 6%;
+
+    /* Keep branded panels on true #2E3192 family in dark mode too */
+    --brand-panel-from: 238 52% 38%;
+    --brand-panel-via: 238 52% 30%;
+    --brand-panel-to: 238 55% 22%;
+
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.3), 0 1px 3px hsl(0 0% 0% / 0.22);
+    --shadow-md: 0 2px 6px hsl(0 0% 0% / 0.3), 0 10px 24px -10px hsl(238 48% 40% / 0.35);
+    --shadow-lg: 0 12px 36px -8px hsl(0 0% 0% / 0.5), 0 6px 14px hsl(238 48% 30% / 0.25);
   }
 
   * {
@@ -49,18 +163,30 @@
 
   body {
     @apply bg-background font-sans text-body text-foreground antialiased;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
   h1 {
-    @apply text-title font-bold tracking-tight text-mwc-blue;
+    @apply text-title font-bold tracking-tight text-primary;
   }
 
   h2 {
-    @apply text-section font-semibold text-mwc-blue;
+    @apply text-section font-semibold text-primary;
   }
 
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -69,13 +195,12 @@
     @apply mx-auto w-full max-w-7xl;
   }
 
-  /* Single source of truth for every elevated surface in the app. */
   .surface {
-    @apply rounded-xl border border-mwc-border bg-white shadow-card;
+    @apply rounded-xl border border-border bg-card text-card-foreground shadow-sm;
   }
 
   .surface-interactive {
-    @apply rounded-xl border border-mwc-border bg-white shadow-card transition-all duration-150 ease-out hover:border-mwc-blue/25 hover:shadow-cardHover;
+    @apply rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-200 ease-out hover:-translate-y-px hover:border-primary/25 hover:shadow-md;
   }
 
   .type-title {
@@ -83,7 +208,7 @@
   }
 
   .type-section {
-    @apply text-section font-semibold;
+    @apply text-section font-semibold tracking-tight;
   }
 
   .type-body {
@@ -95,19 +220,50 @@
   }
 
   .label-caps {
-    @apply text-caption font-medium uppercase tracking-wide text-gray-500;
+    @apply text-caption font-medium uppercase tracking-wide text-muted-foreground;
   }
 
   .glass-panel {
-    @apply border border-white/25 bg-white/15 shadow-glass backdrop-blur-xl;
+    @apply border border-white/25 bg-white/15 shadow-lg backdrop-blur-xl;
   }
 
   .transition-ui {
-    @apply transition-all duration-150 ease-out;
+    @apply transition-all duration-200 ease-out;
   }
 
   .numeric {
     @apply tabular-nums;
     font-variant-numeric: tabular-nums;
+  }
+
+  .brand-panel {
+    @apply border border-white/10 text-white shadow-sm;
+    background-image: linear-gradient(
+      155deg,
+      hsl(var(--brand-panel-from)) 0%,
+      hsl(var(--brand-panel-via)) 55%,
+      hsl(var(--brand-panel-to)) 100%
+    );
+  }
+
+  .skeleton-shimmer {
+    @apply relative overflow-hidden bg-muted;
+  }
+
+  .skeleton-shimmer::after {
+    content: "";
+    @apply absolute inset-0 -translate-x-full animate-[shimmer_1.4s_ease_infinite];
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--foreground) / 0.06),
+      transparent
+    );
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
   }
 }

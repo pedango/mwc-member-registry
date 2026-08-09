@@ -24,9 +24,11 @@ export function StatCard({
   const content = (
     <div
       className={cn(
-        "h-full border-t-2 p-5",
+        "h-full border-t-2 p-6",
         href ? "surface-interactive" : "surface",
-        accent === "gold" ? "border-t-mwc-gold" : "border-t-mwc-border",
+        accent === "gold"
+          ? "border-t-gold bg-gradient-to-br from-card to-gold/10"
+          : "border-t-border",
         className
       )}
     >
@@ -35,10 +37,10 @@ export function StatCard({
         {Icon ? (
           <span
             className={cn(
-              "rounded-full p-2",
+              "rounded-xl p-2.5",
               accent === "gold"
-                ? "bg-mwc-gold/20 text-mwc-ink"
-                : "bg-mwc-blue/10 text-mwc-blue"
+                ? "bg-gold-soft text-gold-soft-fg"
+                : "bg-primary/10 text-primary"
             )}
           >
             <Icon className="h-4 w-4" aria-hidden="true" />
@@ -48,7 +50,7 @@ export function StatCard({
 
       <Numeric
         as="p"
-        className="mt-2 text-4xl font-bold leading-none tracking-tight text-mwc-ink"
+        className="mt-3 text-4xl font-bold leading-none tracking-tight text-foreground"
       >
         {value}
       </Numeric>

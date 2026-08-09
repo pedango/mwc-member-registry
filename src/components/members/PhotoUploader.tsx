@@ -65,7 +65,7 @@ export function PhotoUploader({
 
       {photoUrl ? (
         <div className="space-y-3">
-          <div className="aspect-[4/5] w-full overflow-hidden rounded-lg border border-mwc-border bg-mwc-surface">
+          <div className="aspect-[4/5] w-full overflow-hidden rounded-xl border border-border bg-muted">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photoUrl}
@@ -106,15 +106,15 @@ export function PhotoUploader({
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
           aria-busy={uploading}
-          className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-mwc-border bg-mwc-surface/60 px-4 text-center transition-ui hover:border-mwc-blue/40 hover:bg-mwc-surface disabled:opacity-60"
+          className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/60 px-4 text-center transition-ui hover:border-primary/40 hover:bg-muted disabled:opacity-60"
         >
           {uploading ? (
             <Loader2
-              className="h-6 w-6 animate-spin text-mwc-blue"
+              className="h-6 w-6 animate-spin text-primary"
               aria-hidden="true"
             />
           ) : (
-            <span className="rounded-md bg-white p-2.5 text-mwc-blue shadow-sm">
+            <span className="rounded-xl bg-card p-2.5 text-primary shadow-sm">
               <ImagePlus className="h-5 w-5" aria-hidden="true" />
             </span>
           )}

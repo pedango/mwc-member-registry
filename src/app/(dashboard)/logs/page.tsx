@@ -84,8 +84,8 @@ export default async function LogsPage({
               className={cn(
                 "rounded-full border px-3.5 py-1.5 text-caption font-medium transition-ui",
                 active
-                  ? "border-mwc-blue bg-mwc-blue text-white"
-                  : "border-mwc-border bg-white text-muted-foreground hover:border-mwc-blue/30 hover:text-foreground"
+                  ? "border-primary bg-primary text-primary-foreground ring-2 ring-gold/50 ring-offset-2 ring-offset-background"
+                  : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
               )}
             >
               {filter.label}
@@ -110,7 +110,7 @@ export default async function LogsPage({
           </div>
         ) : (
           <>
-            <TableScroller className="border-t border-mwc-border">
+            <TableScroller className="border-t border-border">
               <DataTable minWidth={720}>
                 <THead>
                   <tr>
@@ -130,10 +130,10 @@ export default async function LogsPage({
                           <span className="inline-flex items-center gap-2.5 font-medium text-foreground">
                             <span
                               className={cn(
-                                "rounded-full p-1.5",
+                                "rounded-xl p-1.5",
                                 log.type === "LOGIN"
-                                  ? "bg-mwc-blue/10 text-mwc-blue"
-                                  : "bg-mwc-surface text-muted-foreground"
+                                  ? "bg-info-soft text-info-soft-fg"
+                                  : "bg-primary/10 text-primary"
                               )}
                             >
                               <Icon className="h-3.5 w-3.5" aria-hidden="true" />
@@ -160,7 +160,7 @@ export default async function LogsPage({
               </DataTable>
             </TableScroller>
 
-            <div className="border-t border-mwc-border bg-mwc-surface/60 px-5 py-3 md:px-6">
+            <div className="border-t border-border bg-muted/50 px-5 py-3 md:px-6">
               <Pagination
                 page={page}
                 pageSize={pageSize}

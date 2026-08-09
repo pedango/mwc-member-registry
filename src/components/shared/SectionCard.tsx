@@ -30,7 +30,7 @@ export function SectionCard({
           )}
         >
           <div className="min-w-0">
-            <h2 className="type-section text-mwc-blue">{title}</h2>
+            <h2 className="type-section text-primary">{title}</h2>
             {description ? (
               <p className="type-body mt-1 text-muted-foreground">
                 {description}
@@ -56,7 +56,7 @@ export function SectionCard({
       </div>
 
       {footer ? (
-        <div className="border-t border-mwc-border bg-mwc-surface/60 px-5 py-3 md:px-6">
+        <div className="border-t border-border bg-muted/50 px-5 py-3 md:px-6">
           {footer}
         </div>
       ) : null}

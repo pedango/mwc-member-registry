@@ -8,11 +8,18 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "border-transparent bg-primary text-primary-foreground",
-        gold: "border-mwc-gold/40 bg-mwc-gold/20 text-[#7A5300]",
-        neutral: "border-mwc-border bg-mwc-surface text-muted-foreground",
-        outline: "border-mwc-border bg-white text-foreground",
-        success: "border-emerald-200 bg-emerald-50 text-emerald-700",
-        destructive: "border-red-200 bg-red-50 text-red-700",
+        gold: "border-transparent bg-gold-soft text-gold-soft-fg",
+        member:
+          "border-transparent bg-primary/10 text-primary",
+        neutral: "border-transparent bg-muted text-muted-foreground",
+        outline: "border-border bg-card text-foreground",
+        success: "border-transparent bg-success-soft text-success-soft-fg",
+        destructive:
+          "border-transparent bg-destructive/10 text-destructive",
+        warning: "border-transparent bg-warning-soft text-warning-soft-fg",
+        info: "border-transparent bg-info-soft text-info-soft-fg",
+        english: "border-transparent bg-info-soft text-info-soft-fg",
+        local: "border-transparent bg-success-soft text-success-soft-fg",
       },
     },
     defaultVariants: {
@@ -33,18 +40,29 @@ function Badge({ className, variant, ...props }: BadgeProps) {
 export function StatusBadge({ status }: { status: string }) {
   const isOfficer = status === "OFFICER";
   return (
-    <Badge variant={isOfficer ? "gold" : "neutral"}>
+    <Badge variant={isOfficer ? "gold" : "member"}>
       {isOfficer ? "Officer" : "Member"}
     </Badge>
   );
 }
 
 export function AssemblyBadge({ assembly }: { assembly: string }) {
+  const isEnglish = assembly === "ENGLISH";
   return (
-    <Badge variant="outline">
-      {assembly === "ENGLISH" ? "English" : "Local"}
+    <Badge variant={isEnglish ? "english" : "local"}>
+      {isEnglish ? "English" : "Local"}
     </Badge>
   );
+}
+
+export function LogTypeBadge({
+  type,
+}: {
+  type: "LOGIN" | "EXPORT_SINGLE" | "EXPORT_BULK" | string;
+}) {
+  if (type === "LOGIN") return <Badge variant="info">Login</Badge>;
+  if (type === "EXPORT_BULK") return <Badge variant="warning">Bulk export</Badge>;
+  return <Badge variant="success">Export</Badge>;
 }
 
 export { Badge, badgeVariants };

@@ -148,19 +148,19 @@ export default async function DashboardPage() {
           {recentLogs.length === 0 ? (
             <p className="type-body text-muted-foreground">No activity yet.</p>
           ) : (
-            <ul className="divide-y divide-mwc-border">
+            <ul className="divide-y divide-border">
               {recentLogs.map((log) => {
                 const Icon = LOG_ICONS[log.type];
                 return (
                   <li
                     key={log.id}
-                    className="-mx-2 flex items-center gap-3 rounded-md px-2 py-3 transition-ui hover:bg-mwc-surface"
+                    className="-mx-2 flex items-center gap-3 rounded-xl px-2 py-3 transition-ui hover:bg-muted/70"
                   >
                     <span
                       className={
                         log.type === "LOGIN"
-                          ? "shrink-0 rounded-full bg-mwc-blue/10 p-2 text-mwc-blue"
-                          : "shrink-0 rounded-full bg-mwc-surface p-2 text-muted-foreground"
+                          ? "shrink-0 rounded-xl bg-info-soft p-2 text-info-soft-fg"
+                          : "shrink-0 rounded-xl bg-primary/10 p-2 text-primary"
                       }
                     >
                       <Icon className="h-4 w-4" aria-hidden="true" />
@@ -201,9 +201,9 @@ export default async function DashboardPage() {
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="group flex flex-col justify-between gap-3 rounded-lg border border-mwc-border bg-mwc-surface/50 p-4 transition-ui hover:border-mwc-blue/30 hover:bg-white hover:shadow-cardHover"
+                  className="group flex flex-col justify-between gap-3 rounded-xl border border-border bg-muted/40 p-4 transition-ui hover:-translate-y-px hover:border-primary/30 hover:bg-card hover:shadow-md"
                 >
-                  <span className="w-fit rounded-full bg-white p-2 text-mwc-blue shadow-sm transition-ui group-hover:bg-mwc-blue/10">
+                  <span className="w-fit rounded-xl bg-card p-2 text-primary shadow-sm transition-ui group-hover:bg-primary/10">
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <span>
@@ -219,10 +219,10 @@ export default async function DashboardPage() {
 
           <a
             href="/api/members/template"
-            className="flex items-center gap-3 rounded-lg border border-dashed border-mwc-border px-4 py-3 transition-ui hover:border-mwc-blue/40 hover:bg-mwc-surface"
+            className="flex items-center gap-3 rounded-xl border border-dashed border-border px-4 py-3 transition-ui hover:border-primary/40 hover:bg-muted/50"
           >
             <FileDown
-              className="h-4 w-4 shrink-0 text-mwc-blue"
+              className="h-4 w-4 shrink-0 text-primary"
               aria-hidden="true"
             />
             <span className="min-w-0">
