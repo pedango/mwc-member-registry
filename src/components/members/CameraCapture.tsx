@@ -34,22 +34,31 @@ export function CameraCapture({
     setStarting(true);
     setPreview(null);
     try {
-      // Prefer environment camera on mobile; fall back to any camera.
+      // Prefer the rear/back camera for member photos.
       let stream: MediaStream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: { ideal: "user" },
-            width: { ideal: 640 },
-            height: { ideal: 480 },
+            facingMode: { exact: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 960 },
           },
           audio: false,
         });
       } catch {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: { ideal: "environment" },
+            },
+            audio: false,
+          });
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+        }
       }
 
       streamRef.current = stream;
