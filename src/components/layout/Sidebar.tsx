@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Building2,
+  CalendarCheck,
   FileSpreadsheet,
   LayoutDashboard,
   ScrollText,
@@ -23,6 +24,7 @@ const navGroups = [
     label: "Manage",
     items: [
       { href: "/members", label: "Members", icon: Users },
+      { href: "/attendance", label: "Attendance", icon: CalendarCheck },
       { href: "/assemblies", label: "Assemblies", icon: Building2 },
       { href: "/bulk", label: "Bulk Import", icon: FileSpreadsheet },
       { href: "/users", label: "Users", icon: UserSquare2 },

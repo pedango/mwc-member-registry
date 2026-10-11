@@ -6,6 +6,8 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isLoginPage = pathname.startsWith("/login");
   const isAuthApi = pathname.startsWith("/api/auth");
+  const isPublicCheckIn =
+    pathname === "/check-in" || pathname.startsWith("/api/check-in");
 
   // Static files under /public must never be gated — a redirect returns HTML
   // and shows up as a broken <img> in the browser.
@@ -16,7 +18,7 @@ export default auth((req) => {
     pathname === "/favicon.ico" ||
     /\.[a-zA-Z0-9]+$/.test(pathname);
 
-  if (isAuthApi || isPublicAsset) {
+  if (isAuthApi || isPublicAsset || isPublicCheckIn) {
     return NextResponse.next();
   }
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Building2,
+  CalendarCheck,
   FileDown,
   FileSpreadsheet,
   LogIn,
@@ -46,6 +47,12 @@ const QUICK_ACTIONS: Array<{
     label: "Browse members",
     hint: "Search & edit",
     icon: Users,
+  },
+  {
+    href: "/attendance",
+    label: "Sunday attendance",
+    hint: "QR check-in list",
+    icon: CalendarCheck,
   },
   {
     href: "/bulk",
