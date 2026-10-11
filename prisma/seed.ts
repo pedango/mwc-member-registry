@@ -4,35 +4,25 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const password = await hash("Admin@123!", 12);
+  const password = await hash("admin@123", 12);
 
   const admins = [
-    {
-      email: "admin@mwc.org",
-      name: "System Administrator",
-      password,
-    },
-    {
-      email: "pastor@mwc.org",
-      name: "Lead Pastor",
-      password,
-    },
+    { email: "admin1@mwc.org", name: "Elder Domfeh", password },
+    { email: "admin2@mwc.org", name: "Elder Bob", password },
+    { email: "admin3@mwc.org", name: "Administrator 3", password },
+    { email: "admin4@mwc.org", name: "Administrator 4", password },
+    { email: "admin5@mwc.org", name: "Administrator 5", password },
   ];
 
-  for (const admin of admins) {
-    await prisma.user.upsert({
-      where: { email: admin.email },
-      update: {
-        name: admin.name,
-        password: admin.password,
-      },
-      create: admin,
-    });
-  }
+  await prisma.auditLog.deleteMany();
+  await prisma.user.deleteMany();
 
-  console.log("Seeded admin users:");
-  console.log("  admin@mwc.org / Admin@123!");
-  console.log("  pastor@mwc.org / Admin@123!");
+  await prisma.user.createMany({ data: admins });
+
+  console.log("Cleared previous users and seeded:");
+  for (const admin of admins) {
+    console.log(`  ${admin.email} / admin@123`);
+  }
 }
 
 main()
