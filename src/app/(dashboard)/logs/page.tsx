@@ -4,7 +4,7 @@ import { FileDown, FileSpreadsheet, LogIn, ScrollText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { cn, formatDateTime } from "@/lib/utils";
-import { AUDIT_LABELS, describeAuditTarget } from "@/lib/audit-format";
+import { AUDIT_LABELS } from "@/lib/audit-format";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -73,7 +73,7 @@ export default async function LogsPage({
         description="An immutable record of administrator logins and data exports"
       />
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {FILTERS.map((filter) => {
           const active = (type ?? "") === filter.value;
           return (
@@ -82,7 +82,7 @@ export default async function LogsPage({
               href={filter.value ? `/logs?type=${filter.value}` : "/logs"}
               aria-current={active ? "true" : undefined}
               className={cn(
-                "rounded-full border px-3.5 py-1.5 text-caption font-medium transition-ui",
+                "rounded-full border px-3 py-1 text-caption font-medium transition-ui",
                 active
                   ? "border-primary bg-primary text-primary-foreground ring-2 ring-gold/50 ring-offset-2 ring-offset-background"
                   : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
@@ -96,6 +96,8 @@ export default async function LogsPage({
 
       <SectionCard
         flush
+        compact
+        className="w-full max-w-4xl 2xl:max-w-5xl 3xl:max-w-6xl"
         title="Activity"
         description={`${total} recorded event${total === 1 ? "" : "s"}`}
       >
@@ -110,13 +112,41 @@ export default async function LogsPage({
           </div>
         ) : (
           <>
-            <TableScroller className="border-t border-border">
-              <DataTable minWidth={720}>
+            <ul className="divide-y divide-border border-t border-border md:hidden">
+              {logs.map((log) => {
+                const Icon = LOG_ICONS[log.type];
+                const who = log.user.name || log.user.email;
+                return (
+                  <li key={log.id} className="flex items-start gap-3 px-4 py-3">
+                    <span
+                      className={cn(
+                        "mt-0.5 shrink-0 rounded-xl p-1.5",
+                        log.type === "LOGIN"
+                          ? "bg-info-soft text-info-soft-fg"
+                          : "bg-primary/10 text-primary"
+                      )}
+                    >
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-foreground">
+                        {AUDIT_LABELS[log.type]}
+                      </p>
+                      <p className="truncate type-caption">{who}</p>
+                    </div>
+                    <span className="shrink-0 type-caption text-muted-foreground">
+                      {formatDateTime(log.createdAt)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            <TableScroller className="hidden border-t border-border md:block">
+              <DataTable>
                 <THead>
                   <tr>
                     <Th>Event</Th>
                     <Th>Administrator</Th>
-                    <Th>Details</Th>
                     <Th align="right">When</Th>
                   </tr>
                 </THead>
@@ -142,13 +172,10 @@ export default async function LogsPage({
                           </span>
                         </Td>
                         <Td>
-                          <span className="inline-flex items-center gap-2.5">
+                          <span className="inline-flex min-w-0 items-center gap-2.5">
                             <Avatar name={who} size="sm" />
                             <span className="truncate">{who}</span>
                           </span>
-                        </Td>
-                        <Td muted>
-                          {describeAuditTarget(log.type, log.targetInfo)}
                         </Td>
                         <Td align="right" numeric muted>
                           {formatDateTime(log.createdAt)}

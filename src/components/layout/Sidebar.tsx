@@ -27,7 +27,7 @@ const navGroups = [
       { href: "/attendance", label: "Attendance", icon: CalendarCheck },
       { href: "/assemblies", label: "Assemblies", icon: Building2 },
       { href: "/bulk", label: "Bulk Import", icon: FileSpreadsheet },
-      { href: "/users", label: "Users", icon: UserSquare2 },
+      { href: "/admin", label: "Admins", icon: UserSquare2 },
       { href: "/logs", label: "Audit Logs", icon: ScrollText },
     ],
   },
@@ -54,7 +54,7 @@ export function Sidebar({
       />
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-dvh w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(16.5rem,calc(100vw-2.5rem))] shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:w-64 lg:translate-x-0 3xl:w-72",
           open ? "translate-x-0" : "-translate-x-full"
         )}
         aria-label="Main navigation"

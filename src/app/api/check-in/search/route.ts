@@ -6,6 +6,8 @@ import { getServiceDate } from "@/lib/attendance";
 
 export const dynamic = "force-dynamic";
 
+const MAX_RESULTS = 8;
+
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
   if (q.length < 3) {
@@ -26,7 +28,7 @@ export async function GET(req: NextRequest) {
   const serviceDate = getServiceDate();
   const members = await prisma.member.findMany({
     where,
-    take: 8,
+    take: MAX_RESULTS,
     orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
     select: {
       id: true,
@@ -35,13 +37,20 @@ export async function GET(req: NextRequest) {
       otherNames: true,
       assembly: true,
       photoUrl: true,
-      attendances: {
-        where: { serviceDate },
-        select: { id: true },
-        take: 1,
-      },
     },
   });
+
+  const presentIds =
+    members.length === 0
+      ? []
+      : await prisma.attendance.findMany({
+          where: {
+            serviceDate,
+            memberId: { in: members.map((member) => member.id) },
+          },
+          select: { memberId: true },
+        });
+  const present = new Set(presentIds.map((row) => row.memberId));
 
   return Response.json({
     serviceDate: serviceDate.toISOString().slice(0, 10),
@@ -50,7 +59,7 @@ export async function GET(req: NextRequest) {
       name: fullName(member),
       assembly: member.assembly,
       photoUrl: member.photoUrl,
-      alreadyCheckedIn: member.attendances.length > 0,
+      alreadyCheckedIn: present.has(member.id),
     })),
   });
 }

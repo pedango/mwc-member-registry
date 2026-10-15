@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SetHeaderHeading } from "@/components/layout/header-context";
 
 type Crumb = { label: string; href?: string };
 
@@ -22,13 +23,46 @@ export function PageHeader({
   accent = false,
   className,
 }: PageHeaderProps) {
+  const inChrome = !breadcrumbs?.length;
+
+  if (inChrome) {
+    if (!description && !action) {
+      return <SetHeaderHeading title={title} />;
+    }
+
+    return (
+      <>
+        <SetHeaderHeading title={title} />
+        <div
+          className={cn(
+            "flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between min-[480px]:gap-4 sm:gap-6",
+            className
+          )}
+        >
+          {description ? (
+            <p className="type-body min-w-0 flex-1 text-muted-foreground">
+              {description}
+            </p>
+          ) : (
+            <span className="min-w-0 flex-1" />
+          )}
+          {action ? (
+            <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end [&_a]:w-full sm:[&_a]:w-auto">
+              {action}
+            </div>
+          ) : null}
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className={cn("space-y-3", className)}>
-      {breadcrumbs?.length ? <Breadcrumbs items={breadcrumbs} /> : null}
+      <Breadcrumbs items={breadcrumbs ?? []} />
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0 space-y-1.5">
-          <h1 className="type-title text-primary">{title}</h1>
+          <h1 className="type-title break-words text-primary">{title}</h1>
           {accent ? (
             <span
               className="block h-1 w-12 rounded-full bg-gold"
@@ -42,7 +76,7 @@ export function PageHeader({
           ) : null}
         </div>
         {action ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:pt-1">
+          <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:pt-1 [&_a]:w-full sm:[&_a]:w-auto [&_button]:w-full sm:[&_button]:w-auto">
             {action}
           </div>
         ) : null}

@@ -12,13 +12,20 @@ export function TableScroller({
   className?: string;
 }) {
   return (
-    <div className={cn("w-full overflow-x-auto", className)}>{children}</div>
+    <div
+      className={cn(
+        "w-full max-w-full overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]",
+        className
+      )}
+    >
+      {children}
+    </div>
   );
 }
 
 export function DataTable({
   children,
-  minWidth = 720,
+  minWidth,
   className,
 }: {
   children: React.ReactNode;
@@ -28,7 +35,7 @@ export function DataTable({
   return (
     <table
       className={cn("w-full border-collapse text-left text-sm", className)}
-      style={{ minWidth }}
+      style={minWidth ? { minWidth } : undefined}
     >
       {children}
     </table>
@@ -85,7 +92,7 @@ export function Th({
     <th
       scope="col"
       className={cn(
-        "whitespace-nowrap px-4 py-3.5 text-caption font-semibold uppercase tracking-wide text-muted-foreground",
+        "whitespace-nowrap px-3 py-2.5 text-caption font-semibold uppercase tracking-wide text-muted-foreground sm:px-4",
         alignClass[align],
         className
       )}
@@ -111,7 +118,7 @@ export function Td({
   return (
     <td
       className={cn(
-        "px-4 py-3.5 align-middle",
+        "px-3 py-2.5 align-middle sm:px-4",
         alignClass[align],
         numeric && "numeric tabular-nums",
         muted && "text-muted-foreground",

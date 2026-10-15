@@ -87,7 +87,7 @@ export default function BulkPage() {
         description="Download the template, fill it in, then upload it to create members in one pass"
       />
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] 3xl:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="space-y-6">
           <SectionCard
             title="Step 1 — Download the template"
@@ -178,7 +178,7 @@ export default function BulkPage() {
               title="Import results"
               description="Review anything that needs a second pass"
             >
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <ResultTile label="Rows read" value={result.summary.total} />
                 <ResultTile
                   label="Created"

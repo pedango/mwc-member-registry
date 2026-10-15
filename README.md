@@ -12,7 +12,7 @@ Solo, admin-only full-stack Church Management System for **Mamprobi Worship Cent
 - Spreadsheet template download + bulk import (SheetJS + Zod)
 - Single-member PDF / Excel export
 - Audit logs for logins and exports
-- System users listing
+- Admins listing
 
 ## Tech stack
 

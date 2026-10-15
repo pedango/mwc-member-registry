@@ -29,7 +29,7 @@ export function Pagination({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
+        "flex flex-col gap-2 xs:flex-row xs:items-center xs:justify-between",
         className
       )}
     >

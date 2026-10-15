@@ -96,7 +96,7 @@ export function CheckInClient({ serviceLabel }: { serviceLabel: string }) {
 
   if (done) {
     return (
-      <div className="mx-auto w-full max-w-md px-5 py-10">
+      <div className="mx-auto w-full max-w-md px-4 py-8 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-10 2xl:max-w-lg">
         <div className="mb-8 flex justify-center">
           <Logo className="h-auto w-36" alt="Mamprobi Worship Center" />
         </div>
@@ -122,12 +122,12 @@ export function CheckInClient({ serviceLabel }: { serviceLabel: string }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md px-5 py-10">
+    <div className="mx-auto w-full max-w-md px-4 py-8 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-10 2xl:max-w-lg">
       <div className="mb-6 flex justify-center">
         <Logo className="h-auto w-36" alt="Mamprobi Worship Center" />
       </div>
       <div className="mb-6 text-center">
-        <h1 className="text-title text-primary">Sunday check-in</h1>
+        <h1 className="text-title text-primary">Sunday Attendance</h1>
         <p className="mt-1.5 type-body text-muted-foreground">{serviceLabel}</p>
         <p className="mt-3 text-sm text-muted-foreground">
           Enter your full name, confirm it is you, then tap I&apos;m here.

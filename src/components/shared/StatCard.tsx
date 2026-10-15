@@ -24,7 +24,7 @@ export function StatCard({
   const content = (
     <div
       className={cn(
-        "h-full border-t-2 p-6",
+        "h-full border-t-2 p-4 sm:p-5",
         href ? "surface-interactive" : "surface",
         accent === "gold"
           ? "border-t-gold bg-gradient-to-br from-card to-gold/10"
@@ -50,7 +50,7 @@ export function StatCard({
 
       <Numeric
         as="p"
-        className="mt-3 text-4xl font-bold leading-none tracking-tight text-foreground"
+        className="mt-2 text-3xl font-bold leading-none tracking-tight text-foreground"
       >
         {value}
       </Numeric>

@@ -9,8 +9,8 @@ async function main() {
   const admins = [
     { email: "admin1@mwc.org", name: "Elder Domfeh", password },
     { email: "admin2@mwc.org", name: "Elder Bob", password },
-    { email: "admin3@mwc.org", name: "Administrator 3", password },
-    { email: "admin4@mwc.org", name: "Administrator 4", password },
+    { email: "admin3@mwc.org", name: "Elder Awotwe", password },
+    { email: "admin4@mwc.org", name: "Dangoman", password },
     { email: "admin5@mwc.org", name: "Administrator 5", password },
   ];
 

@@ -49,7 +49,7 @@ export default function LoginClient() {
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-background lg:flex-row">
-      <div className="absolute right-6 top-6 z-20 sm:right-8 sm:top-8 lg:right-10 lg:top-8">
+      <div className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-20 sm:right-8 sm:top-8 lg:right-10">
         <ThemeToggle
           aria-label="Toggle dark mode"
           className="rounded-xl border border-border bg-card/80 shadow-sm backdrop-blur"
@@ -57,7 +57,7 @@ export default function LoginClient() {
       </div>
 
       {/* Left panel — leave structure as-is */}
-      <aside className="relative h-44 w-full shrink-0 overflow-hidden sm:h-52 lg:h-auto lg:min-h-dvh lg:w-[48%]">
+      <aside className="relative h-36 w-full shrink-0 overflow-hidden xs:h-40 sm:h-52 md:h-64 lg:h-auto lg:min-h-dvh lg:w-[42%] xl:w-[46%] 3xl:w-[40%]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logos/mwc-building.jpg"
@@ -83,7 +83,7 @@ export default function LoginClient() {
       </aside>
 
       {/* Right panel — content block vertically + horizontally centered */}
-      <main className="flex flex-1 flex-col justify-center bg-gradient-to-b from-background to-muted/40 px-6 py-12 sm:px-10 lg:px-14 xl:px-20">
+      <main className="flex flex-1 flex-col justify-center bg-gradient-to-b from-background to-muted/40 px-4 py-8 pb-[max(2.5rem,env(safe-area-inset-bottom))] xs:px-5 sm:px-10 lg:px-14 xl:px-20 3xl:px-28">
         <div className="mx-auto w-full max-w-[440px]">
           {/* Intro block: logo + heading grouped tightly */}
           <div className="mb-6 flex flex-col items-center text-center">

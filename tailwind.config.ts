@@ -9,6 +9,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "390px",
+        "3xl": "1920px",
+        "4xl": "2560px",
+      },
       spacing: {
         4.5: "1.125rem",
         13: "3.25rem",

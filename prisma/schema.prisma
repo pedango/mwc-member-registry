@@ -63,6 +63,8 @@ model Member {
 
   @@index([assembly])
   @@index([lastName, firstName])
+  @@index([location])
+  @@index([contact])
 }
 
 model AuditLog {
@@ -81,9 +83,11 @@ model Attendance {
   id          String   @id @default(cuid())
   memberId    String
   member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  assembly    Assembly
   serviceDate DateTime @db.Date
   checkedInAt DateTime @default(now())
 
   @@unique([memberId, serviceDate])
-  @@index([serviceDate])
+  @@index([serviceDate, assembly])
+  @@index([checkedInAt])
 }

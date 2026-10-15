@@ -26,8 +26,9 @@ function ThemedToaster() {
   return (
     <Toaster
       richColors
-      position="top-right"
+      position="top-center"
       closeButton
+      offset={16}
       theme={resolvedTheme === "dark" ? "dark" : "light"}
     />
   );

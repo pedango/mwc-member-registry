@@ -1,9 +1,8 @@
 import { NextRequest } from "next/server";
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { fullName } from "@/lib/utils";
-import { getServiceDate } from "@/lib/attendance";
+import { getServiceDate, serviceDateIso } from "@/lib/attendance";
 
 export const dynamic = "force-dynamic";
 
@@ -33,36 +32,20 @@ export async function POST(req: NextRequest) {
   }
 
   const serviceDate = getServiceDate();
-
-  try {
-    const attendance = await prisma.attendance.create({
-      data: {
-        memberId: member.id,
-        serviceDate,
-      },
-    });
-
-    return Response.json({
-      ok: true,
-      alreadyCheckedIn: false,
-      name: fullName(member),
+  const created = await prisma.attendance.createMany({
+    data: {
+      memberId: member.id,
       assembly: member.assembly,
-      serviceDate: serviceDate.toISOString().slice(0, 10),
-      checkedInAt: attendance.checkedInAt,
-    });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      return Response.json({
-        ok: true,
-        alreadyCheckedIn: true,
-        name: fullName(member),
-        assembly: member.assembly,
-        serviceDate: serviceDate.toISOString().slice(0, 10),
-      });
-    }
-    throw error;
-  }
+      serviceDate,
+    },
+    skipDuplicates: true,
+  });
+
+  return Response.json({
+    ok: true,
+    alreadyCheckedIn: created.count === 0,
+    name: fullName(member),
+    assembly: member.assembly,
+    serviceDate: serviceDateIso(serviceDate),
+  });
 }

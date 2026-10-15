@@ -50,10 +50,10 @@ export default async function AssembliesPage({
     <>
       <PageHeader
         title="Assemblies"
-        description="Choose an assembly to see its membership roll"
+        description="Choose an assembly to see its membership"
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         {assemblies.map((item) => {
           const isSelected = selected === item.key;
           const share =
@@ -65,7 +65,7 @@ export default async function AssembliesPage({
               href={isSelected ? "/assemblies" : `/assemblies?assembly=${item.key}`}
               aria-current={isSelected ? "true" : undefined}
               className={cn(
-                "group flex items-start justify-between gap-4 p-5 transition-ui",
+                "group flex items-start justify-between gap-4 p-4 transition-ui sm:p-5",
                 isSelected
                   ? "surface border-primary ring-1 ring-primary"
                   : "surface-interactive"
@@ -75,7 +75,7 @@ export default async function AssembliesPage({
                 <p className="label-caps">{item.label}</p>
                 <Numeric
                   as="p"
-                  className="mt-2 text-4xl font-bold leading-none tracking-tight text-foreground"
+                  className="mt-1.5 text-3xl font-bold leading-none tracking-tight text-foreground"
                 >
                   {item.count}
                 </Numeric>
@@ -116,7 +116,7 @@ export default async function AssembliesPage({
           } in this assembly`}
           action={
             <Button asChild variant="outline" size="sm">
-              <Link href="/assemblies">Clear selection</Link>
+              <Link href="/assemblies">Go back</Link>
             </Button>
           }
         >
@@ -135,12 +135,37 @@ export default async function AssembliesPage({
               />
             </div>
           ) : (
-            <TableScroller className="border-t border-border">
-              <DataTable minWidth={560}>
+            <>
+            <ul className="divide-y divide-border border-t border-border md:hidden">
+              {members.map((m) => {
+                const name = fullName(m);
+                return (
+                  <li key={m.id}>
+                    <Link
+                      href={`/members/${m.id}`}
+                      className="flex items-center gap-3 px-4 py-3"
+                    >
+                      <Avatar src={m.photoUrl} name={name} size="sm" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-medium text-foreground">
+                          {name}
+                        </span>
+                        <span className="block truncate type-caption">
+                          {m.contact || "No contact"}
+                        </span>
+                      </span>
+                      <StatusBadge status={m.status} />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <TableScroller className="hidden border-t border-border md:block">
+              <DataTable>
                 <THead>
                   <tr>
                     <Th>Member</Th>
-                    <Th>Contact</Th>
+                    <Th className="hidden lg:table-cell">Contact</Th>
                     <Th align="right">Status</Th>
                   </tr>
                 </THead>
@@ -152,15 +177,17 @@ export default async function AssembliesPage({
                         <Td>
                           <Link
                             href={`/members/${m.id}`}
-                            className="flex items-center gap-3 rounded-md"
+                            className="flex min-w-0 items-center gap-3 rounded-md"
                           >
                             <Avatar src={m.photoUrl} name={name} size="sm" />
-                            <span className="font-medium text-foreground">
+                            <span className="truncate font-medium text-foreground">
                               {name}
                             </span>
                           </Link>
                         </Td>
-                        <Td muted>{m.contact || "—"}</Td>
+                        <Td muted className="hidden lg:table-cell">
+                          {m.contact || "—"}
+                        </Td>
                         <Td align="right">
                           <StatusBadge status={m.status} />
                         </Td>
@@ -170,6 +197,7 @@ export default async function AssembliesPage({
                 </TBody>
               </DataTable>
             </TableScroller>
+            </>
           )}
         </SectionCard>
       ) : (

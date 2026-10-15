@@ -167,14 +167,15 @@ export function CameraCapture({
             muted
             autoPlay
           />
-          <div className="flex gap-2">
-            <Button type="button" size="sm" className="flex-1" onClick={capture}>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button type="button" size="sm" className="w-full flex-1" onClick={capture}>
               Capture
             </Button>
             <Button
               type="button"
               size="sm"
               variant="outline"
+              className="w-full sm:w-auto"
               onClick={stopCamera}
             >
               Cancel
@@ -191,11 +192,11 @@ export function CameraCapture({
             alt="Captured preview"
             className="aspect-[4/5] w-full rounded-xl border border-border object-cover"
           />
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Button
               type="button"
               size="sm"
-              className="flex-1"
+              className="w-full flex-1"
               onClick={confirm}
             >
               <Check className="h-4 w-4" aria-hidden="true" />
@@ -205,6 +206,7 @@ export function CameraCapture({
               type="button"
               size="sm"
               variant="outline"
+              className="w-full sm:w-auto"
               onClick={() => {
                 setPreview(null);
                 void startCamera();

@@ -10,6 +10,7 @@ export function SectionCard({
   footer,
   /** Removes body padding so tables can sit flush against the card edges. */
   flush = false,
+  compact = false,
 }: {
   title?: string;
   description?: string;
@@ -19,20 +20,32 @@ export function SectionCard({
   action?: React.ReactNode;
   footer?: React.ReactNode;
   flush?: boolean;
+  compact?: boolean;
 }) {
   return (
     <section className={cn("surface flex flex-col overflow-hidden", className)}>
       {title ? (
         <div
           className={cn(
-            "flex flex-col gap-3 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between md:px-6 md:pt-6",
-            flush && "pb-5 md:pb-6"
+            "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between",
+            compact
+              ? "px-4 py-3"
+              : "px-4 pt-4 sm:px-5 sm:pt-5 md:px-6 md:pt-6",
+            flush && !compact && "pb-4 md:pb-5",
+            flush && compact && "pb-3"
           )}
         >
           <div className="min-w-0">
-            <h2 className="type-section text-primary">{title}</h2>
+            <h2
+              className={cn(
+                "text-primary",
+                compact ? "text-base font-semibold" : "type-section"
+              )}
+            >
+              {title}
+            </h2>
             {description ? (
-              <p className="type-body mt-1 text-muted-foreground">
+              <p className="type-caption mt-0.5 text-muted-foreground">
                 {description}
               </p>
             ) : null}
@@ -46,9 +59,9 @@ export function SectionCard({
       <div
         className={cn(
           "flex-1",
-          flush ? "" : "px-5 pb-5 md:px-6 md:pb-6",
-          !flush && title && "pt-5",
-          !flush && !title && "pt-5 md:pt-6",
+          flush ? "" : "px-4 pb-4 sm:px-5 sm:pb-5 md:px-6 md:pb-6",
+          !flush && title && "pt-4 sm:pt-5",
+          !flush && !title && "pt-4 sm:pt-5 md:pt-6",
           contentClassName
         )}
       >

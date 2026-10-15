@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Download, MapPin, Pencil, Phone } from "lucide-react";
+import { Download, MapPin, Pencil, Phone, Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { fullName, formatDate, initials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,18 +29,26 @@ export default async function MemberProfilePage({
         title={name}
         description="Full membership profile"
         action={
-          <Button asChild>
-            <Link href={`/members/${member.id}/edit`}>
-              <Pencil className="h-4 w-4" aria-hidden="true" />
-              Edit member
-            </Link>
-          </Button>
+          <>
+            <Button asChild>
+              <Link href="/members/new">
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Add member
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={`/members/${member.id}/edit`}>
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+                Edit member
+              </Link>
+            </Button>
+          </>
         }
       />
 
       <div className="surface overflow-hidden">
-        <div className="flex flex-col gap-6 p-5 sm:flex-row sm:items-center md:p-6">
-          <div className="flex h-40 w-32 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/15 bg-primary/10">
+        <div className="flex flex-col gap-6 p-4 sm:flex-row sm:items-center sm:p-5 md:p-6">
+          <div className="mx-auto flex h-40 w-32 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-primary/15 bg-primary/10 sm:mx-0">
             {member.photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -82,14 +90,14 @@ export default async function MemberProfilePage({
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-wrap gap-2 sm:flex-col">
-            <Button asChild variant="outline" size="sm">
+          <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-col">
+            <Button asChild variant="outline" size="sm" className="w-full">
               <a href={`/api/members/${member.id}/export?format=pdf`}>
                 <Download className="h-4 w-4" aria-hidden="true" />
                 Export PDF
               </a>
             </Button>
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline" size="sm" className="w-full">
               <a href={`/api/members/${member.id}/export?format=xlsx`}>
                 <Download className="h-4 w-4" aria-hidden="true" />
                 Export Excel
@@ -99,7 +107,7 @@ export default async function MemberProfilePage({
         </div>
 
         <div className="border-t border-border bg-muted/50 px-5 py-3 type-caption md:px-6">
-          Added {formatDate(member.createdAt)} by{" "}
+          Added on {formatDate(member.createdAt)} by{" "}
           {member.createdBy?.name || member.createdBy?.email || "unknown"}
         </div>
       </div>

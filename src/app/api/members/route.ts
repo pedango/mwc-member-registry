@@ -9,6 +9,7 @@ import {
 } from "@/lib/validations/member";
 import { invalidateMemberCaches } from "@/lib/redis";
 import { fullName } from "@/lib/utils";
+import { memberDirectoryWhere } from "@/lib/member-search";
 
 function parseDate(value?: string | null) {
   if (!value) return null;
@@ -47,14 +48,7 @@ export async function GET(req: NextRequest) {
   if (assembly === "ENGLISH" || assembly === "LOCAL") {
     where.assembly = assembly;
   }
-  if (q) {
-    where.OR = [
-      { firstName: { contains: q, mode: "insensitive" } },
-      { lastName: { contains: q, mode: "insensitive" } },
-      { otherNames: { contains: q, mode: "insensitive" } },
-      { contact: { contains: q, mode: "insensitive" } },
-    ];
-  }
+  Object.assign(where, memberDirectoryWhere(q));
 
   const [total, members] = await Promise.all([
     prisma.member.count({ where }),

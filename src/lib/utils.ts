@@ -38,6 +38,18 @@ export function formatDateTime(date: Date | string | null | undefined) {
   });
 }
 
+export function formatTime(date: Date | string | null | undefined) {
+  if (!date) return "—";
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Africa/Accra",
+  });
+}
+
 export function formatDate(date: Date | string | null | undefined) {
   if (!date) return "—";
   const d = typeof date === "string" ? new Date(date) : date;

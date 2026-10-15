@@ -67,8 +67,8 @@ const QUICK_ACTIONS: Array<{
     icon: Building2,
   },
   {
-    href: "/users",
-    label: "System users",
+    href: "/admin",
+    label: "Admins",
     hint: "Admin accounts",
     icon: UserSquare2,
   },
@@ -106,10 +106,10 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 3xl:gap-5">
         <StatCard
           accent="gold"
-          label="Total members"
+          label="Total members (DISTRICT)"
           value={totalMembers}
           subtext="Across both assemblies"
           icon={Users}
@@ -138,9 +138,9 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <div className="grid items-stretch gap-6 lg:grid-cols-5">
+      <div className="grid items-stretch gap-4 xl:grid-cols-5 3xl:gap-6">
         <SectionCard
-          className="lg:col-span-3"
+          className="xl:col-span-3"
           title="Recent activity"
           description="Latest logins and exports"
           action={
@@ -161,7 +161,7 @@ export default async function DashboardPage() {
                 return (
                   <li
                     key={log.id}
-                    className="-mx-2 flex items-center gap-3 rounded-xl px-2 py-3 transition-ui hover:bg-muted/70"
+                    className="-mx-2 flex items-start gap-3 rounded-xl px-2 py-3 transition-ui hover:bg-muted/70 sm:items-center"
                   >
                     <span
                       className={
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
                     </span>
 
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-foreground">
+                      <p className="text-sm font-semibold text-foreground">
                         {AUDIT_LABELS[log.type]}
                         <span className="ml-2 font-normal text-muted-foreground">
                           {log.user.name || log.user.email}
@@ -183,9 +183,12 @@ export default async function DashboardPage() {
                       <p className="truncate type-caption">
                         {describeAuditTarget(log.type, log.targetInfo)}
                       </p>
+                      <Numeric className="mt-1 type-caption sm:hidden">
+                        {formatDateTime(log.createdAt)}
+                      </Numeric>
                     </div>
 
-                    <Numeric className="shrink-0 type-caption text-right">
+                    <Numeric className="hidden shrink-0 type-caption text-right sm:block">
                       {formatDateTime(log.createdAt)}
                     </Numeric>
                   </li>
@@ -196,12 +199,12 @@ export default async function DashboardPage() {
         </SectionCard>
 
         <SectionCard
-          className="lg:col-span-2"
+          className="xl:col-span-2"
           title="Quick actions"
           description="Common admin tasks"
           contentClassName="flex flex-col gap-3"
         >
-          <div className="grid flex-1 gap-3 sm:grid-cols-2">
+          <div className="grid flex-1 grid-cols-1 gap-3 min-[420px]:grid-cols-2">
             {QUICK_ACTIONS.map((action) => {
               const Icon = action.icon;
               return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { memberDirectoryWhere } from "@/lib/member-search";
 import { Button } from "@/components/ui/button";
 import { MembersTable } from "@/components/members/MembersTable";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -16,16 +16,7 @@ export default async function MembersPage({
   const page = Math.max(1, Number(searchParams.page || 1));
   const pageSize = 10;
 
-  const where = q
-    ? {
-        OR: [
-          { firstName: { contains: q, mode: "insensitive" as const } },
-          { lastName: { contains: q, mode: "insensitive" as const } },
-          { otherNames: { contains: q, mode: "insensitive" as const } },
-          { contact: { contains: q, mode: "insensitive" as const } },
-        ],
-      }
-    : {};
+  const where = memberDirectoryWhere(q);
 
   const [total, members] = await Promise.all([
     prisma.member.count({ where }),
@@ -39,18 +30,7 @@ export default async function MembersPage({
 
   return (
     <>
-      <PageHeader
-        title="Members"
-        description="Search, view, and manage church member records"
-        action={
-          <Button asChild>
-            <Link href="/members/new">
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              Add member
-            </Link>
-          </Button>
-        }
-      />
+      <PageHeader title="Members" />
 
       <Suspense fallback={<TableSkeleton />}>
         <MembersTable
@@ -61,6 +41,11 @@ export default async function MembersPage({
           total={total}
           page={page}
           pageSize={pageSize}
+          action={
+            <Button asChild>
+              <Link href="/members/new">Add member</Link>
+            </Button>
+          }
         />
       </Suspense>
     </>

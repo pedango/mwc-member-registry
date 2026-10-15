@@ -163,7 +163,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
           are required.
         </p>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">
           <aside className="space-y-4">
             <div className="brand-panel overflow-hidden rounded-xl p-5">
               <div className="flex items-center gap-4">
@@ -403,16 +403,22 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-6">
+        <div className="sticky bottom-0 z-20 flex flex-col-reverse gap-2 border-t border-border bg-background/95 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-end sm:gap-3 sm:py-4">
           <Button
             type="button"
             variant="outline"
+            className="w-full sm:w-auto"
             onClick={() => router.back()}
             disabled={submitting}
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={submitting} aria-busy={submitting}>
+          <Button
+            type="submit"
+            className="w-full sm:w-auto"
+            disabled={submitting}
+            aria-busy={submitting}
+          >
             {submitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -466,11 +472,11 @@ function FormSection({
 }) {
   return (
     <section className="surface overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-border bg-muted/70 px-5 py-3.5">
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <div className="flex items-center gap-3 border-b border-border bg-muted/70 px-4 py-3 sm:px-5 sm:py-3.5">
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <Icon className="h-4 w-4" aria-hidden="true" />
         </span>
-        <h2 className="type-section text-primary">
+        <h2 className="min-w-0 text-base font-semibold tracking-tight text-primary sm:text-section">
           <span className="numeric mr-2 text-muted-foreground">{step}.</span>
           {title}
         </h2>
