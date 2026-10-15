@@ -14,14 +14,17 @@ async function main() {
     { email: "admin5@mwc.org", name: "Administrator 5", password },
   ];
 
-  await prisma.auditLog.deleteMany();
-  await prisma.user.deleteMany();
-
-  await prisma.user.createMany({ data: admins });
-
-  console.log("Cleared previous users and seeded:");
   for (const admin of admins) {
-    console.log(`  ${admin.email} / admin@123`);
+    await prisma.user.upsert({
+      where: { email: admin.email },
+      update: { name: admin.name, password: admin.password },
+      create: admin,
+    });
+  }
+
+  console.log("Seeded administrators:");
+  for (const admin of admins) {
+    console.log(`  ${admin.email} (${admin.name}) / admin@123`);
   }
 }
 
