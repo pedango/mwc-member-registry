@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import type { LogType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { getCachedCount, setCachedCount } from "@/lib/redis";
 import { AUDIT_LABELS, describeAuditTarget } from "@/lib/audit-format";
 import { formatDateTime } from "@/lib/utils";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -21,14 +20,6 @@ import { StatCard } from "@/components/shared/StatCard";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { Numeric } from "@/components/shared/Numeric";
 import { Button } from "@/components/ui/button";
-
-async function getMemberCount() {
-  const cached = await getCachedCount("member:count");
-  if (cached !== null) return cached;
-  const count = await prisma.member.count();
-  await setCachedCount("member:count", count);
-  return count;
-}
 
 const LOG_ICONS: Record<LogType, LucideIcon> = {
   LOGIN: LogIn,
@@ -75,18 +66,30 @@ const QUICK_ACTIONS: Array<{
 ];
 
 export default async function DashboardPage() {
-  const [totalMembers, englishCount, localCount, officerCount, recentLogs] =
-    await Promise.all([
-      getMemberCount(),
-      prisma.member.count({ where: { assembly: "ENGLISH" } }),
-      prisma.member.count({ where: { assembly: "LOCAL" } }),
-      prisma.member.count({ where: { status: "OFFICER" } }),
-      prisma.auditLog.findMany({
-        take: 5,
-        orderBy: { createdAt: "desc" },
-        include: { user: { select: { name: true, email: true } } },
-      }),
-    ]);
+  const [byAssembly, officerCount, recentLogs] = await Promise.all([
+    prisma.member.groupBy({
+      by: ["assembly"],
+      _count: { _all: true },
+    }),
+    prisma.member.count({ where: { status: "OFFICER" } }),
+    prisma.auditLog.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        type: true,
+        createdAt: true,
+        targetInfo: true,
+        user: { select: { name: true, email: true } },
+      },
+    }),
+  ]);
+
+  const englishCount =
+    byAssembly.find((row) => row.assembly === "ENGLISH")?._count._all ?? 0;
+  const localCount =
+    byAssembly.find((row) => row.assembly === "LOCAL")?._count._all ?? 0;
+  const totalMembers = englishCount + localCount;
 
   const share = (count: number) =>
     totalMembers > 0

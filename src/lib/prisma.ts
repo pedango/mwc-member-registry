@@ -18,10 +18,13 @@ function datasourceUrl() {
   try {
     const url = new URL(raw);
     if (!url.searchParams.has("connect_timeout")) {
-      url.searchParams.set("connect_timeout", "15");
+      url.searchParams.set("connect_timeout", "5");
     }
     if (!url.searchParams.has("pool_timeout")) {
-      url.searchParams.set("pool_timeout", "15");
+      url.searchParams.set("pool_timeout", "5");
+    }
+    if (!url.searchParams.has("connection_limit")) {
+      url.searchParams.set("connection_limit", "5");
     }
     // Neon pooler hosts need pgbouncer mode so prepared statements are disabled.
     if (

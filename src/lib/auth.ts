@@ -24,6 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email: parsed.data.email.toLowerCase() },
+          select: { id: true, email: true, name: true, password: true },
         });
 
         if (!user) return null;
@@ -49,20 +50,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        return token;
       }
-
-      if (token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { name: true, email: true },
-        });
-        if (dbUser) {
-          token.name = dbUser.name;
-          token.email = dbUser.email;
-        }
-      }
-
       return token;
     },
     async session({ session, token }) {
@@ -75,18 +63,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   events: {
-    async signIn({ user }) {
-      if (user?.id) {
-        try {
-          await createAuditLog({
-            userId: user.id,
-            type: "LOGIN",
-            targetInfo: user.email ?? undefined,
-          });
-        } catch {
-          // Don't block login if audit write fails
-        }
-      }
+    signIn({ user }) {
+      if (!user?.id) return;
+      void createAuditLog({
+        userId: user.id,
+        type: "LOGIN",
+        targetInfo: user.email ?? undefined,
+      }).catch(() => {
+        // Don't block login if audit write fails
+      });
     },
   },
   trustHost: true,

@@ -8,10 +8,19 @@ export const redis =
       })
     : null;
 
+function withTimeout<T>(promise: Promise<T>, ms = 200): Promise<T | null> {
+  return Promise.race([
+    promise,
+    new Promise<null>((resolve) => {
+      setTimeout(() => resolve(null), ms);
+    }),
+  ]);
+}
+
 export async function getCachedCount(key: string): Promise<number | null> {
   if (!redis) return null;
   try {
-    const value = await redis.get<number>(key);
+    const value = await withTimeout(redis.get<number>(key));
     return value ?? null;
   } catch {
     return null;
@@ -21,7 +30,7 @@ export async function getCachedCount(key: string): Promise<number | null> {
 export async function setCachedCount(key: string, value: number, ttl = 60) {
   if (!redis) return;
   try {
-    await redis.set(key, value, { ex: ttl });
+    await withTimeout(redis.set(key, value, { ex: ttl }));
   } catch {
     // optional cache — ignore failures
   }
@@ -30,7 +39,9 @@ export async function setCachedCount(key: string, value: number, ttl = 60) {
 export async function invalidateMemberCaches() {
   if (!redis) return;
   try {
-    await redis.del("member:count", "member:count:ENGLISH", "member:count:LOCAL");
+    await withTimeout(
+      redis.del("member:count", "member:count:ENGLISH", "member:count:LOCAL")
+    );
   } catch {
     // optional cache — ignore failures
   }
