@@ -25,9 +25,9 @@ type BulkResult = {
 const TEMPLATE_COLUMNS = [
   { name: "firstName", note: "Required" },
   { name: "lastName", note: "Required" },
-  { name: "sex", note: "MALE or FEMALE" },
-  { name: "assembly", note: "ENGLISH or LOCAL" },
-  { name: "status", note: "MEMBER or OFFICER" },
+  { name: "sex", note: "Male or Female" },
+  { name: "assembly", note: "English or Local" },
+  { name: "status", note: "Member or Officer" },
   { name: "otherNames", note: "Optional" },
   { name: "contact", note: "Optional" },
   { name: "location", note: "Optional" },

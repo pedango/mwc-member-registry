@@ -18,6 +18,67 @@ export const MEMBER_TEMPLATE_HEADERS = [
   "baptisedBy",
 ] as const;
 
+type TemplateHeader = (typeof MEMBER_TEMPLATE_HEADERS)[number];
+
+const HEADER_ALIASES: Record<string, TemplateHeader> = {
+  firstname: "firstName",
+  first: "firstName",
+  givenname: "firstName",
+  lastname: "lastName",
+  last: "lastName",
+  surname: "lastName",
+  familyname: "lastName",
+  othernames: "otherNames",
+  othername: "otherNames",
+  middlename: "otherNames",
+  sex: "sex",
+  gender: "sex",
+  assembly: "assembly",
+  service: "assembly",
+  contact: "contact",
+  phone: "contact",
+  phonenumber: "contact",
+  mobile: "contact",
+  photourl: "photoUrl",
+  photo: "photoUrl",
+  location: "location",
+  address: "location",
+  mothername: "motherName",
+  mothersname: "motherName",
+  mother: "motherName",
+  fathername: "fatherName",
+  fathersname: "fatherName",
+  father: "fatherName",
+  position: "position",
+  status: "status",
+  datebaptised: "dateBaptised",
+  baptismdate: "dateBaptised",
+  baptisedby: "baptisedBy",
+  baptizedby: "baptisedBy",
+};
+
+function canonicalHeader(raw: string): TemplateHeader | undefined {
+  const compact = raw
+    .replace(/^\uFEFF/, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+  return HEADER_ALIASES[compact];
+}
+
+function cellValue(value: unknown) {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10);
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed === "" || trimmed === "-" || /^n\/?a$/i.test(trimmed)) return "";
+    return trimmed;
+  }
+  if (value === undefined || value === null) return "";
+  return value;
+}
+
 export function buildMemberTemplateBuffer() {
   const worksheet = XLSX.utils.aoa_to_sheet([
     [...MEMBER_TEMPLATE_HEADERS],
@@ -60,16 +121,17 @@ export function parseMemberSpreadsheet(buffer: ArrayBuffer | Buffer) {
 
   rows.forEach((raw, index) => {
     const normalized: Record<string, unknown> = {};
-    for (const key of MEMBER_TEMPLATE_HEADERS) {
-      const matchKey = Object.keys(raw).find(
-        (k) => k.trim().toLowerCase() === key.toLowerCase()
-      );
-      let value = matchKey ? raw[matchKey] : "";
-      if (value instanceof Date) {
-        value = value.toISOString().slice(0, 10);
-      }
-      normalized[key] = typeof value === "string" ? value.trim() : value;
+    for (const [rawKey, rawValue] of Object.entries(raw)) {
+      const key = canonicalHeader(rawKey);
+      if (!key) continue;
+      normalized[key] = cellValue(rawValue);
     }
+
+    const hasAnyValue = MEMBER_TEMPLATE_HEADERS.some((key) => {
+      const value = normalized[key];
+      return value !== undefined && value !== null && String(value).trim() !== "";
+    });
+    if (!hasAnyValue) return;
 
     const parsed = bulkMemberRowSchema.safeParse(normalized);
     if (!parsed.success) {

@@ -25,38 +25,61 @@ export const memberFormSchema = z.object({
 
 export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
+function asTrimmedString(value: unknown) {
+  if (value === undefined || value === null) return "";
+  return String(value).trim();
+}
+
+function normalizeSex(value: unknown) {
+  const s = asTrimmedString(value).toUpperCase();
+  if (["M", "MALE", "MAN"].includes(s)) return "MALE";
+  if (["F", "FEMALE", "WOMAN"].includes(s)) return "FEMALE";
+  return s;
+}
+
+function normalizeAssembly(value: unknown) {
+  const s = asTrimmedString(value).toUpperCase();
+  if (s.startsWith("ENG")) return "ENGLISH";
+  if (s.startsWith("LOC")) return "LOCAL";
+  return s;
+}
+
+function normalizeStatus(value: unknown) {
+  const s = asTrimmedString(value).toUpperCase();
+  if (!s) return "MEMBER";
+  if (s.startsWith("OFF")) return "OFFICER";
+  if (s.startsWith("MEM")) return "MEMBER";
+  return s;
+}
+
 export const bulkMemberRowSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
+  firstName: z.preprocess(asTrimmedString, z.string().min(1, "First name is required")),
+  lastName: z.preprocess(asTrimmedString, z.string().min(1, "Last name is required")),
   otherNames: z.string().optional().nullable(),
-  sex: z
-    .string()
-    .transform((v) => v.trim().toUpperCase())
-    .pipe(sexSchema),
-  assembly: z
-    .string()
-    .transform((v) => {
-      const normalized = v.trim().toUpperCase();
-      if (normalized.startsWith("ENG")) return "ENGLISH";
-      if (normalized.startsWith("LOC")) return "LOCAL";
-      return normalized;
+  sex: z.preprocess(
+    normalizeSex,
+    z.enum(["MALE", "FEMALE"], {
+      errorMap: () => ({ message: "Sex must be Male or Female" }),
     })
-    .pipe(assemblySchema),
+  ),
+  assembly: z.preprocess(
+    normalizeAssembly,
+    z.enum(["ENGLISH", "LOCAL"], {
+      errorMap: () => ({ message: "Assembly must be English or Local" }),
+    })
+  ),
   contact: z.string().optional().nullable(),
   photoUrl: z.string().optional().nullable(),
   location: z.string().optional().nullable(),
   motherName: z.string().optional().nullable(),
   fatherName: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
-  status: z
-    .string()
-    .optional()
-    .transform((v) => {
-      if (!v) return "MEMBER" as const;
-      const normalized = v.trim().toUpperCase();
-      if (normalized.startsWith("OFF")) return "OFFICER" as const;
-      return "MEMBER" as const;
-    }),
+  status: z.preprocess(
+    normalizeStatus,
+    z.enum(["MEMBER", "OFFICER"], {
+      errorMap: () => ({ message: "Status must be Member or Officer" }),
+    })
+  ),
   dateBaptised: z.string().optional().nullable(),
   baptisedBy: z.string().optional().nullable(),
 });
