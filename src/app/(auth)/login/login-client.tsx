@@ -46,7 +46,7 @@ export default function LoginClient() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col bg-background lg:flex-row">
+    <div className="relative flex h-dvh flex-col overflow-y-auto bg-background lg:flex-row">
       <div className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-20 sm:right-8 sm:top-8 lg:right-10">
         <ThemeToggle
           aria-label="Toggle dark mode"

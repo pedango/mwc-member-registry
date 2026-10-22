@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+      <body className="h-dvh overflow-hidden font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

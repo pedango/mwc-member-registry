@@ -7,7 +7,7 @@ export default function CheckInPage() {
   const serviceDate = getServiceDate();
 
   return (
-    <main className="min-h-dvh bg-background">
+    <main className="h-dvh overflow-y-auto bg-background">
       <CheckInClient serviceLabel={formatServiceDateLong(serviceDate)} />
     </main>
   );
