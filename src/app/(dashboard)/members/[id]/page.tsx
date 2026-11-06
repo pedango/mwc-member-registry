@@ -232,6 +232,16 @@ export default async function MemberProfilePage({
           </dl>
         </SectionCard>
 
+        <SectionCard title="Profile" className="lg:col-span-2">
+          {member.profile ? (
+            <p className="type-body whitespace-pre-wrap font-medium text-foreground">
+              {member.profile}
+            </p>
+          ) : (
+            <p className="type-body text-muted-foreground">Not recorded</p>
+          )}
+        </SectionCard>
+
         <SectionCard title="Dedication" className="lg:col-span-2">
           <dl className="grid gap-5 sm:grid-cols-2">
             <Detail label="Dedicated" value={formatYesNo(member.dedicated)} />

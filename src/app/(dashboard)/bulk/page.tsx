@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { Numeric } from "@/components/shared/Numeric";
+import { MEMBER_TEMPLATE_COLUMNS } from "@/lib/validations/member";
 
 type BulkResult = {
   succeeded: Array<{ row: number; id: string }>;
@@ -22,22 +23,7 @@ type BulkResult = {
   summary: { total: number; successCount: number; failCount: number };
 };
 
-const TEMPLATE_COLUMNS = [
-  { name: "firstName", note: "Required" },
-  { name: "lastName", note: "Required" },
-  { name: "sex", note: "Male or Female" },
-  { name: "assembly", note: "English or Local" },
-  { name: "status", note: "Member or Officer" },
-  { name: "otherNames", note: "Optional" },
-  { name: "contact", note: "Optional" },
-  { name: "location", note: "Optional" },
-  { name: "motherName", note: "Optional" },
-  { name: "fatherName", note: "Optional" },
-  { name: "position", note: "Optional" },
-  { name: "photoUrl", note: "Optional URL" },
-  { name: "dateBaptised", note: "Optional date" },
-  { name: "baptisedBy", note: "Optional" },
-];
+const TEMPLATE_COLUMNS = MEMBER_TEMPLATE_COLUMNS;
 
 export default function BulkPage() {
   const inputRef = useRef<HTMLInputElement>(null);

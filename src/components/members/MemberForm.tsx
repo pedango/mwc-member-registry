@@ -9,6 +9,7 @@ import {
   Building2,
   Camera,
   Droplet,
+  FileText,
   HeartHandshake,
   Loader2,
   Phone,
@@ -22,12 +23,14 @@ import {
   EDUCATION_OPTIONS,
   MARITAL_STATUS_OPTIONS,
   TITLE_OPTIONS,
+  PROFILE_MAX_LENGTH,
   memberFormSchema,
   type MemberFormValues,
 } from "@/lib/validations/member";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -73,6 +76,7 @@ const TRACKED_FIELDS = [
   "communicant",
   "occupation",
   "educationLevel",
+  "profile",
   "dedicated",
   "dedicationDate",
   "dedicationOfficiatingMinister",
@@ -110,6 +114,7 @@ const EMPTY_VALUES: MemberFormValues = {
   communicant: null,
   occupation: "",
   educationLevel: "",
+  profile: "",
   dedicated: null,
   dedicationDate: "",
   dedicationOfficiatingMinister: "",
@@ -602,6 +607,27 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                   />
                 </Field>
               </div>
+            </FormSection>
+
+            <FormSection
+              step={7}
+              title="Profile"
+              icon={FileText}
+              hint="Optional"
+            >
+              <Field
+                label="Profile"
+                error={form.formState.errors.profile?.message}
+                hint="Longer notes, testimony, or background. Up to 10,000 characters."
+              >
+                <Textarea
+                  rows={8}
+                  maxLength={PROFILE_MAX_LENGTH}
+                  className="min-h-[10rem] resize-y"
+                  {...form.register("profile")}
+                  aria-invalid={!!form.formState.errors.profile}
+                />
+              </Field>
             </FormSection>
           </div>
         </div>

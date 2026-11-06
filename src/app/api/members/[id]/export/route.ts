@@ -5,9 +5,15 @@ import { unauthorizedResponse } from "@/lib/session";
 import { buildMemberPdf } from "@/lib/pdf";
 import { buildSingleMemberExcelBuffer } from "@/lib/xlsx";
 import { createAuditLog } from "@/lib/audit";
-import { fullName } from "@/lib/utils";
+import { fullName, toDateInput } from "@/lib/utils";
 
 type Params = { params: { id: string } };
+
+function yesNo(value: boolean | null | undefined) {
+  if (value === true) return "Yes";
+  if (value === false) return "No";
+  return "";
+}
 
 export async function GET(req: NextRequest, { params }: Params) {
   const session = await auth();
@@ -29,20 +35,41 @@ export async function GET(req: NextRequest, { params }: Params) {
 
   if (format === "xlsx") {
     const buffer = buildSingleMemberExcelBuffer({
+      title: member.title,
       firstName: member.firstName,
+      middleName: member.middleName,
       lastName: member.lastName,
-      otherNames: member.otherNames,
       sex: member.sex,
-      assembly: member.assembly,
-      contact: member.contact,
-      photoUrl: member.photoUrl,
-      location: member.location,
-      motherName: member.motherName,
-      fatherName: member.fatherName,
-      position: member.position,
+      dateOfBirth: toDateInput(member.dateOfBirth),
+      placeOfBirth: member.placeOfBirth,
+      phone: member.phone,
+      email: member.email,
       status: member.status,
-      dateBaptised: member.dateBaptised?.toISOString().slice(0, 10) ?? "",
-      baptisedBy: member.baptisedBy,
+      maritalStatus: member.maritalStatus,
+      addressLine1: member.addressLine1,
+      gpsAddress: member.gpsAddress,
+      hometown: member.hometown,
+      streetName: member.streetName,
+      city: member.city,
+      holyGhostBaptism: yesNo(member.holyGhostBaptism),
+      dateOfHolySpiritBaptism: toDateInput(member.dateOfHolySpiritBaptism),
+      waterBaptism: yesNo(member.waterBaptism),
+      dateOfBaptism: toDateInput(member.dateOfBaptism),
+      dateOfConversion: toDateInput(member.dateOfConversion),
+      dateOfJoining: toDateInput(member.dateOfJoining),
+      placeOfBaptism: member.placeOfBaptism,
+      officiatingMinisterBaptism: member.officiatingMinisterBaptism,
+      officiatingMinisterDistrict: member.officiatingMinisterDistrict,
+      communicant: yesNo(member.communicant),
+      occupation: member.occupation,
+      educationLevel: member.educationLevel,
+      profile: member.profile,
+      dedicated: yesNo(member.dedicated),
+      dedicationDate: toDateInput(member.dedicationDate),
+      dedicationOfficiatingMinister: member.dedicationOfficiatingMinister,
+      dedicationChurch: member.dedicationChurch,
+      assembly: member.assembly,
+      photoUrl: member.photoUrl,
     });
 
     return new Response(new Uint8Array(buffer), {

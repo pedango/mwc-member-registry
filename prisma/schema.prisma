@@ -82,6 +82,7 @@ model Member {
 
   occupation                    String?
   educationLevel                String?
+  profile                       String?        @db.Text
   dedicated                     Boolean?
   dedicationDate                DateTime?
   dedicationOfficiatingMinister String?

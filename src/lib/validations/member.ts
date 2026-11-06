@@ -67,6 +67,7 @@ export const MEMBER_TEMPLATE_HEADERS = [
   "communicant",
   "occupation",
   "educationLevel",
+  "profile",
   "dedicated",
   "dedicationDate",
   "dedicationOfficiatingMinister",
@@ -107,6 +108,7 @@ export const MEMBER_TEMPLATE_COLUMNS: Array<{
   { name: "communicant", note: "Optional: Yes or No" },
   { name: "occupation", note: "Optional" },
   { name: "educationLevel", note: "Optional" },
+  { name: "profile", note: "Optional long text" },
   { name: "dedicated", note: "Optional: Yes or No" },
   { name: "dedicationDate", note: "Optional date" },
   { name: "dedicationOfficiatingMinister", note: "Optional" },
@@ -114,6 +116,8 @@ export const MEMBER_TEMPLATE_COLUMNS: Array<{
   { name: "assembly", note: "Required: English or Local" },
   { name: "photoUrl", note: "Optional URL" },
 ];
+
+export const PROFILE_MAX_LENGTH = 10000;
 
 const optionalText = (max: number) =>
   z.string().max(max).optional().nullable();
@@ -167,6 +171,7 @@ export const memberFormSchema = z.object({
   communicant: optionalBoolean,
   occupation: optionalText(150),
   educationLevel: optionalText(80),
+  profile: optionalText(PROFILE_MAX_LENGTH),
   dedicated: optionalBoolean,
   dedicationDate: optionalDateString,
   dedicationOfficiatingMinister: optionalText(150),
@@ -301,6 +306,10 @@ export const bulkMemberRowSchema = z.object({
   communicant: optionalBulkBoolean,
   occupation: optionalBulkText,
   educationLevel: optionalBulkText,
+  profile: z.preprocess((value) => {
+    const s = asTrimmedString(value);
+    return s === "" ? null : s;
+  }, z.string().max(PROFILE_MAX_LENGTH).optional().nullable()),
   dedicated: optionalBulkBoolean,
   dedicationDate: optionalBulkDate,
   dedicationOfficiatingMinister: optionalBulkText,
@@ -360,6 +369,7 @@ export function toMemberRecord(
     communicant: data.communicant ?? null,
     occupation: emptyToNull(data.occupation),
     educationLevel: emptyToNull(data.educationLevel),
+    profile: emptyToNull(data.profile),
     dedicated: data.dedicated ?? null,
     dedicationDate: parseDate(data.dedicationDate),
     dedicationOfficiatingMinister: emptyToNull(

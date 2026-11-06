@@ -59,6 +59,7 @@ export default async function EditMemberPage({
           communicant: member.communicant,
           occupation: member.occupation ?? "",
           educationLevel: member.educationLevel ?? "",
+          profile: member.profile ?? "",
           dedicated: member.dedicated,
           dedicationDate: toDateInput(member.dedicationDate),
           dedicationOfficiatingMinister:
