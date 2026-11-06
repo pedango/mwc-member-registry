@@ -11,6 +11,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed:fake-members": "tsx scripts/seed-fake-members.ts",
+    "db:bench:members": "tsx scripts/bench-members.ts",
     "db:push": "prisma db push"
   },
   "dependencies": {
