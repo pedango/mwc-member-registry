@@ -7,7 +7,7 @@ import {
   parseServiceDateParam,
   serviceDateIso,
 } from "@/lib/attendance";
-import { formatTime, fullName } from "@/lib/utils";
+import { formatMemberName, formatTime } from "@/lib/utils";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -40,7 +40,7 @@ const attendanceSelect = {
       id: true,
       firstName: true,
       lastName: true,
-      otherNames: true,
+      middleName: true,
       photoUrl: true,
     },
   },
@@ -160,7 +160,7 @@ export default async function AttendancePage({
             <>
               <ul className="divide-y divide-border border-t border-border md:hidden">
                 {records.map((row) => {
-                  const name = fullName(row.member);
+                  const name = formatMemberName(row.member);
                   return (
                     <li key={row.id}>
                       <Link
@@ -199,7 +199,7 @@ export default async function AttendancePage({
                   </THead>
                   <TBody>
                     {records.map((row) => {
-                      const name = fullName(row.member);
+                      const name = formatMemberName(row.member);
                       return (
                         <Tr key={row.id}>
                           <Td align="center">

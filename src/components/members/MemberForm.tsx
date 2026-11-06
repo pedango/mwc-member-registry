@@ -5,17 +5,23 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Briefcase,
   Building2,
   Camera,
   Droplet,
+  HeartHandshake,
   Loader2,
   Phone,
   Upload,
   User,
   UserRound,
+  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
+  EDUCATION_OPTIONS,
+  MARITAL_STATUS_OPTIONS,
+  TITLE_OPTIONS,
   memberFormSchema,
   type MemberFormValues,
 } from "@/lib/validations/member";
@@ -35,7 +41,7 @@ import {
   uploadCapturedPhoto,
 } from "@/components/members/PhotoUploader";
 import { DuplicateWarningDialog } from "@/components/members/DuplicateWarningDialog";
-import { cn, fullName } from "@/lib/utils";
+import { cn, formatMemberName } from "@/lib/utils";
 
 type Props = {
   mode: "create" | "edit";
@@ -44,18 +50,72 @@ type Props = {
 };
 
 const TRACKED_FIELDS = [
-  "firstName",
-  "lastName",
-  "otherNames",
-  "contact",
+  "title",
+  "middleName",
+  "placeOfBirth",
+  "phone",
+  "email",
+  "maritalStatus",
+  "addressLine1",
+  "gpsAddress",
+  "hometown",
+  "streetName",
+  "city",
+  "holyGhostBaptism",
+  "dateOfHolySpiritBaptism",
+  "waterBaptism",
+  "dateOfBaptism",
+  "dateOfConversion",
+  "dateOfJoining",
+  "placeOfBaptism",
+  "officiatingMinisterBaptism",
+  "officiatingMinisterDistrict",
+  "communicant",
+  "occupation",
+  "educationLevel",
+  "dedicated",
+  "dedicationDate",
+  "dedicationOfficiatingMinister",
+  "dedicationChurch",
   "photoUrl",
-  "location",
-  "motherName",
-  "fatherName",
-  "position",
-  "dateBaptised",
-  "baptisedBy",
 ] as const;
+
+const EMPTY_VALUES: MemberFormValues = {
+  title: "",
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  sex: "MALE",
+  dateOfBirth: "",
+  placeOfBirth: "",
+  phone: "",
+  email: "",
+  assembly: "ENGLISH",
+  status: "MEMBER",
+  maritalStatus: null,
+  addressLine1: "",
+  gpsAddress: "",
+  hometown: "",
+  streetName: "",
+  city: "",
+  holyGhostBaptism: null,
+  dateOfHolySpiritBaptism: "",
+  waterBaptism: null,
+  dateOfBaptism: "",
+  dateOfConversion: "",
+  dateOfJoining: "",
+  placeOfBaptism: "",
+  officiatingMinisterBaptism: "",
+  officiatingMinisterDistrict: "",
+  communicant: null,
+  occupation: "",
+  educationLevel: "",
+  dedicated: null,
+  dedicationDate: "",
+  dedicationOfficiatingMinister: "",
+  dedicationChurch: "",
+  photoUrl: "",
+};
 
 export function MemberForm({ mode, memberId, defaultValues }: Props) {
   const router = useRouter();
@@ -69,20 +129,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      otherNames: "",
-      sex: "MALE",
-      assembly: "ENGLISH",
-      contact: "",
-      photoUrl: "",
-      location: "",
-      motherName: "",
-      fatherName: "",
-      position: "",
-      status: "MEMBER",
-      dateBaptised: "",
-      baptisedBy: "",
+      ...EMPTY_VALUES,
       ...defaultValues,
     },
   });
@@ -90,14 +137,15 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
   const values = form.watch();
   const photoUrl = values.photoUrl;
   const previewName =
-    fullName({
+    formatMemberName({
       firstName: values.firstName ?? "",
       lastName: values.lastName ?? "",
-      otherNames: values.otherNames,
+      middleName: values.middleName,
     }).trim() || "New member";
 
   const filledCount = TRACKED_FIELDS.filter((key) => {
     const value = values[key];
+    if (typeof value === "boolean") return true;
     return typeof value === "string" ? value.trim() !== "" : Boolean(value);
   }).length;
   const completeness = Math.round((filledCount / TRACKED_FIELDS.length) * 100);
@@ -275,6 +323,19 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
           <div className="space-y-6">
             <FormSection step={1} title="Personal info" icon={User}>
               <div className="grid gap-5 md:grid-cols-2">
+                <Field label="Title">
+                  <OptionalSelect
+                    value={values.title}
+                    placeholder="Select title"
+                    options={TITLE_OPTIONS.map((title) => ({
+                      value: title,
+                      label: title,
+                    }))}
+                    onChange={(value) =>
+                      form.setValue("title", value, { shouldDirty: true })
+                    }
+                  />
+                </Field>
                 <Field
                   label="First name"
                   error={form.formState.errors.firstName?.message}
@@ -285,6 +346,9 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     autoComplete="given-name"
                     aria-invalid={!!form.formState.errors.firstName}
                   />
+                </Field>
+                <Field label="Middle name">
+                  <Input {...form.register("middleName")} />
                 </Field>
                 <Field
                   label="Last name"
@@ -297,10 +361,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     aria-invalid={!!form.formState.errors.lastName}
                   />
                 </Field>
-                <Field label="Other names" hint="Middle or additional names">
-                  <Input {...form.register("otherNames")} />
-                </Field>
-                <Field label="Sex" required>
+                <Field label="Gender" required>
                   <Select
                     value={form.watch("sex")}
                     onValueChange={(v) =>
@@ -317,6 +378,34 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                       <SelectItem value="FEMALE">Female</SelectItem>
                     </SelectContent>
                   </Select>
+                </Field>
+                <Field
+                  label="Date of birth"
+                  error={form.formState.errors.dateOfBirth?.message}
+                  required
+                >
+                  <Input
+                    type="date"
+                    {...form.register("dateOfBirth")}
+                    aria-invalid={!!form.formState.errors.dateOfBirth}
+                  />
+                </Field>
+                <Field label="Place of birth">
+                  <Input {...form.register("placeOfBirth")} />
+                </Field>
+                <Field label="Marital status">
+                  <OptionalSelect
+                    value={values.maritalStatus}
+                    placeholder="Select marital status"
+                    options={[...MARITAL_STATUS_OPTIONS]}
+                    onChange={(value) =>
+                      form.setValue(
+                        "maritalStatus",
+                        (value as MemberFormValues["maritalStatus"]) || null,
+                        { shouldDirty: true }
+                      )
+                    }
+                  />
                 </Field>
               </div>
             </FormSection>
@@ -341,7 +430,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     </SelectContent>
                   </Select>
                 </Field>
-                <Field label="Status" required>
+                <Field label="Member type" required>
                   <Select
                     value={form.watch("status")}
                     onValueChange={(v) =>
@@ -359,44 +448,158 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     </SelectContent>
                   </Select>
                 </Field>
-                <Field label="Position held" className="md:col-span-2">
+              </div>
+            </FormSection>
+
+            <FormSection step={3} title="Contact & address" icon={Phone}>
+              <div className="grid gap-5 md:grid-cols-2">
+                <Field label="Phone">
+                  <Input {...form.register("phone")} placeholder="024..." />
+                </Field>
+                <Field
+                  label="Email"
+                  error={form.formState.errors.email?.message}
+                >
                   <Input
-                    {...form.register("position")}
-                    placeholder="e.g. Usher, Deacon"
+                    type="email"
+                    {...form.register("email")}
+                    autoComplete="email"
+                    aria-invalid={!!form.formState.errors.email}
                   />
+                </Field>
+                <Field label="Address line 1" className="md:col-span-2">
+                  <Input {...form.register("addressLine1")} />
+                </Field>
+                <Field label="Street name">
+                  <Input {...form.register("streetName")} />
+                </Field>
+                <Field label="City">
+                  <Input {...form.register("city")} />
+                </Field>
+                <Field label="GPS address">
+                  <Input
+                    {...form.register("gpsAddress")}
+                    placeholder="GA-123-4567"
+                  />
+                </Field>
+                <Field label="Hometown">
+                  <Input {...form.register("hometown")} />
                 </Field>
               </div>
             </FormSection>
 
             <FormSection
-              step={3}
-              title="Baptism"
+              step={4}
+              title="Baptism & faith"
               icon={Droplet}
               hint="Optional"
             >
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Date baptised">
-                  <Input type="date" {...form.register("dateBaptised")} />
+                <Field label="Holy Ghost baptism">
+                  <YesNoSelect
+                    value={values.holyGhostBaptism}
+                    onChange={(value) =>
+                      form.setValue("holyGhostBaptism", value, {
+                        shouldDirty: true,
+                      })
+                    }
+                  />
                 </Field>
-                <Field label="Baptised by">
-                  <Input {...form.register("baptisedBy")} />
+                <Field label="Date of Holy Spirit baptism">
+                  <Input
+                    type="date"
+                    {...form.register("dateOfHolySpiritBaptism")}
+                  />
+                </Field>
+                <Field label="Water baptism">
+                  <YesNoSelect
+                    value={values.waterBaptism}
+                    onChange={(value) =>
+                      form.setValue("waterBaptism", value, {
+                        shouldDirty: true,
+                      })
+                    }
+                  />
+                </Field>
+                <Field label="Date of baptism">
+                  <Input type="date" {...form.register("dateOfBaptism")} />
+                </Field>
+                <Field label="Date of conversion">
+                  <Input type="date" {...form.register("dateOfConversion")} />
+                </Field>
+                <Field label="Date of joining us">
+                  <Input type="date" {...form.register("dateOfJoining")} />
+                </Field>
+                <Field label="Place of baptism">
+                  <Input {...form.register("placeOfBaptism")} />
+                </Field>
+                <Field label="Communicant">
+                  <YesNoSelect
+                    value={values.communicant}
+                    onChange={(value) =>
+                      form.setValue("communicant", value, {
+                        shouldDirty: true,
+                      })
+                    }
+                  />
+                </Field>
+                <Field label="Officiating minister (baptism)">
+                  <Input {...form.register("officiatingMinisterBaptism")} />
+                </Field>
+                <Field label="Officiating minister's district / church">
+                  <Input {...form.register("officiatingMinisterDistrict")} />
                 </Field>
               </div>
             </FormSection>
 
-            <FormSection step={4} title="Contact & family" icon={Phone}>
+            <FormSection
+              step={5}
+              title="Dedication"
+              icon={HeartHandshake}
+              hint="Optional"
+            >
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Contact">
-                  <Input {...form.register("contact")} placeholder="+233..." />
+                <Field label="Dedicated">
+                  <YesNoSelect
+                    value={values.dedicated}
+                    onChange={(value) =>
+                      form.setValue("dedicated", value, { shouldDirty: true })
+                    }
+                  />
                 </Field>
-                <Field label="Location / residence">
-                  <Input {...form.register("location")} />
+                <Field label="Dedication date">
+                  <Input type="date" {...form.register("dedicationDate")} />
                 </Field>
-                <Field label="Mother's full name">
-                  <Input {...form.register("motherName")} />
+                <Field label="Name of officiating minister">
+                  <Input
+                    {...form.register("dedicationOfficiatingMinister")}
+                  />
                 </Field>
-                <Field label="Father's full name">
-                  <Input {...form.register("fatherName")} />
+                <Field label="Church where dedication was done">
+                  <Input {...form.register("dedicationChurch")} />
+                </Field>
+              </div>
+            </FormSection>
+
+            <FormSection step={6} title="Work & education" icon={Briefcase}>
+              <div className="grid gap-5 md:grid-cols-2">
+                <Field label="Occupation">
+                  <Input {...form.register("occupation")} />
+                </Field>
+                <Field label="Level of education">
+                  <OptionalSelect
+                    value={values.educationLevel}
+                    placeholder="Select education level"
+                    options={EDUCATION_OPTIONS.map((level) => ({
+                      value: level,
+                      label: level,
+                    }))}
+                    onChange={(value) =>
+                      form.setValue("educationLevel", value, {
+                        shouldDirty: true,
+                      })
+                    }
+                  />
                 </Field>
               </div>
             </FormSection>
@@ -437,10 +640,10 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
         open={duplicateOpen}
         memberName={
           pendingPayload
-            ? fullName({
+            ? formatMemberName({
                 firstName: pendingPayload.firstName,
                 lastName: pendingPayload.lastName,
-                otherNames: pendingPayload.otherNames,
+                middleName: pendingPayload.middleName,
               })
             : ""
         }
@@ -466,7 +669,7 @@ function FormSection({
 }: {
   step: number;
   title: string;
-  icon: typeof User;
+  icon: LucideIcon;
   hint?: string;
   children: React.ReactNode;
 }) {
@@ -480,9 +683,7 @@ function FormSection({
           <span className="numeric mr-2 text-muted-foreground">{step}.</span>
           {title}
         </h2>
-        {hint ? (
-          <span className="ml-auto type-caption">{hint}</span>
-        ) : null}
+        {hint ? <span className="ml-auto type-caption">{hint}</span> : null}
       </div>
       <div className="p-5 md:p-6">{children}</div>
     </section>
@@ -519,5 +720,64 @@ function Field({
         <p className="mt-1.5 type-caption">{hint}</p>
       ) : null}
     </div>
+  );
+}
+
+function OptionalSelect({
+  value,
+  options,
+  placeholder,
+  onChange,
+}: {
+  value?: string | null;
+  options: Array<{ value: string; label: string }>;
+  placeholder: string;
+  onChange: (value: string | null) => void;
+}) {
+  return (
+    <Select
+      value={value || "unset"}
+      onValueChange={(next) => onChange(next === "unset" ? null : next)}
+    >
+      <SelectTrigger>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="unset">Not specified</SelectItem>
+        {options.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function YesNoSelect({
+  value,
+  onChange,
+}: {
+  value?: boolean | null;
+  onChange: (value: boolean | null) => void;
+}) {
+  const selected =
+    value === true ? "yes" : value === false ? "no" : "unset";
+  return (
+    <Select
+      value={selected}
+      onValueChange={(next) =>
+        onChange(next === "yes" ? true : next === "no" ? false : null)
+      }
+    >
+      <SelectTrigger>
+        <SelectValue placeholder="Not specified" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="unset">Not specified</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }

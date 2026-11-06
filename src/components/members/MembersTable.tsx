@@ -19,7 +19,7 @@ import {
   Th,
   Tr,
 } from "@/components/shared/DataTable";
-import { fullName } from "@/lib/utils";
+import { formatMemberName } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,10 +36,10 @@ type MemberRow = {
   id: string;
   firstName: string;
   lastName: string;
-  otherNames?: string | null;
+  middleName?: string | null;
   assembly: string;
   status: string;
-  contact?: string | null;
+  phone?: string | null;
   photoUrl?: string | null;
   createdAt: string;
 };
@@ -102,7 +102,7 @@ export function MembersTable({
               key={q}
               name="q"
               defaultValue={q}
-              placeholder="Search by name, contact, or location"
+              placeholder="Search by name, phone, email, or city"
               className="pl-9 pr-9"
               aria-label="Search members"
             />
@@ -155,7 +155,7 @@ export function MembersTable({
           title={q ? "No members match your search" : "No members yet"}
           description={
             q
-              ? "Try a different name, contact, or location — or clear the search."
+              ? "Try a different name, phone, email, or city — or clear the search."
               : "Add your first member to start building the church directory."
           }
           action={
@@ -177,7 +177,7 @@ export function MembersTable({
         <div className="surface overflow-hidden">
           <ul className="divide-y divide-border md:hidden">
             {members.map((m) => {
-              const name = fullName(m);
+              const name = formatMemberName(m);
               return (
                 <li key={m.id} className="p-4">
                   <div className="flex items-start gap-3">
@@ -192,7 +192,7 @@ export function MembersTable({
                         {name}
                       </Link>
                       <p className="mt-0.5 truncate type-caption">
-                        {m.contact || "No contact"}
+                        {m.phone || "No phone"}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         <AssemblyBadge assembly={m.assembly} />
@@ -265,14 +265,14 @@ export function MembersTable({
                   <Th align="center">Assembly</Th>
                   <Th align="center">Status</Th>
                   <Th align="center" className="hidden lg:table-cell">
-                    Contact
+                    Phone
                   </Th>
                   <Th align="center">Actions</Th>
                 </tr>
               </THead>
               <TBody>
                 {members.map((m) => {
-                  const name = fullName(m);
+                  const name = formatMemberName(m);
                   return (
                     <Tr key={m.id}>
                       <Td>
@@ -293,7 +293,7 @@ export function MembersTable({
                         <StatusBadge status={m.status} />
                       </Td>
                       <Td align="center" muted className="hidden lg:table-cell">
-                        {m.contact || "—"}
+                        {m.phone || "—"}
                       </Td>
                       <Td align="center">
                         <div className="inline-flex justify-center gap-0.5">

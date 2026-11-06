@@ -2,7 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Download, MapPin, Pencil, Phone, Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { fullName, formatDate, initials } from "@/lib/utils";
+import {
+  formatDate,
+  formatMaritalStatus,
+  formatYesNo,
+  formatMemberName,
+  initials,
+} from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { AssemblyBadge, StatusBadge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -20,7 +26,11 @@ export default async function MemberProfilePage({
 
   if (!member) notFound();
 
-  const name = fullName(member);
+  const name = formatMemberName(member);
+  const location =
+    [member.addressLine1, member.city].filter(Boolean).join(", ") ||
+    member.gpsAddress ||
+    member.hometown;
 
   return (
     <>
@@ -65,10 +75,12 @@ export default async function MemberProfilePage({
 
           <div className="min-w-0 flex-1 space-y-3">
             <div>
-              <h2 className="type-section text-foreground">{name}</h2>
-              {member.position ? (
+              <h2 className="type-section text-foreground">
+                {member.title ? `${member.title} ${name}` : name}
+              </h2>
+              {member.occupation ? (
                 <p className="type-body text-muted-foreground">
-                  {member.position}
+                  {member.occupation}
                 </p>
               ) : null}
             </div>
@@ -81,11 +93,11 @@ export default async function MemberProfilePage({
             <div className="flex flex-col gap-1.5 type-body text-muted-foreground sm:flex-row sm:flex-wrap sm:gap-x-6">
               <span className="inline-flex items-center gap-2">
                 <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
-                {member.contact || "No contact on file"}
+                {member.phone || "No phone on file"}
               </span>
               <span className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
-                {member.location || "No location on file"}
+                {location || "No address on file"}
               </span>
             </div>
           </div>
@@ -115,20 +127,32 @@ export default async function MemberProfilePage({
       <div className="grid gap-6 lg:grid-cols-2">
         <SectionCard title="Personal details">
           <dl className="grid gap-5 sm:grid-cols-2">
+            <Detail label="Title" value={member.title} />
             <Detail label="First name" value={member.firstName} />
+            <Detail label="Middle name" value={member.middleName} />
             <Detail label="Last name" value={member.lastName} />
-            <Detail label="Other names" value={member.otherNames} />
             <Detail
-              label="Sex"
+              label="Gender"
               value={member.sex === "FEMALE" ? "Female" : "Male"}
             />
-            <Detail label="Contact" value={member.contact} />
-            <Detail label="Location" value={member.location} />
+            <Detail
+              label="Date of birth"
+              value={member.dateOfBirth ? formatDate(member.dateOfBirth) : null}
+            />
+            <Detail label="Place of birth" value={member.placeOfBirth} />
+            <Detail
+              label="Marital status"
+              value={formatMaritalStatus(member.maritalStatus)}
+            />
           </dl>
         </SectionCard>
 
         <SectionCard title="Church details">
           <dl className="grid gap-5 sm:grid-cols-2">
+            <Detail
+              label="Member type"
+              value={member.status === "OFFICER" ? "Officer" : "Member"}
+            />
             <Detail
               label="Assembly"
               value={
@@ -137,25 +161,94 @@ export default async function MemberProfilePage({
                   : "Local Assembly"
               }
             />
-            <Detail
-              label="Status"
-              value={member.status === "OFFICER" ? "Officer" : "Member"}
-            />
-            <Detail label="Position held" value={member.position} />
-            <Detail
-              label="Date baptised"
-              value={
-                member.dateBaptised ? formatDate(member.dateBaptised) : null
-              }
-            />
-            <Detail label="Baptised by" value={member.baptisedBy} />
+            <Detail label="Occupation" value={member.occupation} />
+            <Detail label="Level of education" value={member.educationLevel} />
           </dl>
         </SectionCard>
 
-        <SectionCard title="Family" className="lg:col-span-2">
+        <SectionCard title="Contact & address">
           <dl className="grid gap-5 sm:grid-cols-2">
-            <Detail label="Mother's name" value={member.motherName} />
-            <Detail label="Father's name" value={member.fatherName} />
+            <Detail label="Phone" value={member.phone} />
+            <Detail label="Email" value={member.email} />
+            <Detail label="Address line 1" value={member.addressLine1} />
+            <Detail label="Street name" value={member.streetName} />
+            <Detail label="City" value={member.city} />
+            <Detail label="GPS address" value={member.gpsAddress} />
+            <Detail label="Hometown" value={member.hometown} />
+          </dl>
+        </SectionCard>
+
+        <SectionCard title="Baptism & faith">
+          <dl className="grid gap-5 sm:grid-cols-2">
+            <Detail
+              label="Holy Ghost baptism"
+              value={formatYesNo(member.holyGhostBaptism)}
+            />
+            <Detail
+              label="Date of Holy Spirit baptism"
+              value={
+                member.dateOfHolySpiritBaptism
+                  ? formatDate(member.dateOfHolySpiritBaptism)
+                  : null
+              }
+            />
+            <Detail
+              label="Water baptism"
+              value={formatYesNo(member.waterBaptism)}
+            />
+            <Detail
+              label="Date of baptism"
+              value={
+                member.dateOfBaptism ? formatDate(member.dateOfBaptism) : null
+              }
+            />
+            <Detail
+              label="Date of conversion"
+              value={
+                member.dateOfConversion
+                  ? formatDate(member.dateOfConversion)
+                  : null
+              }
+            />
+            <Detail
+              label="Date of joining us"
+              value={
+                member.dateOfJoining ? formatDate(member.dateOfJoining) : null
+              }
+            />
+            <Detail label="Place of baptism" value={member.placeOfBaptism} />
+            <Detail
+              label="Officiating minister"
+              value={member.officiatingMinisterBaptism}
+            />
+            <Detail
+              label="Minister's district / church"
+              value={member.officiatingMinisterDistrict}
+            />
+            <Detail
+              label="Communicant"
+              value={formatYesNo(member.communicant)}
+            />
+          </dl>
+        </SectionCard>
+
+        <SectionCard title="Dedication" className="lg:col-span-2">
+          <dl className="grid gap-5 sm:grid-cols-2">
+            <Detail label="Dedicated" value={formatYesNo(member.dedicated)} />
+            <Detail
+              label="Dedication date"
+              value={
+                member.dedicationDate ? formatDate(member.dedicationDate) : null
+              }
+            />
+            <Detail
+              label="Name of officiating minister"
+              value={member.dedicationOfficiatingMinister}
+            />
+            <Detail
+              label="Church where dedication was done"
+              value={member.dedicationChurch}
+            />
           </dl>
         </SectionCard>
       </div>

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { MemberForm } from "@/components/members/MemberForm";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { fullName } from "@/lib/utils";
+import { formatMemberName, toDateInput } from "@/lib/utils";
 
 export default async function EditMemberPage({
   params,
@@ -12,7 +12,7 @@ export default async function EditMemberPage({
   const member = await prisma.member.findUnique({ where: { id: params.id } });
   if (!member) notFound();
 
-  const name = fullName(member);
+  const name = formatMemberName(member);
 
   return (
     <>
@@ -29,22 +29,42 @@ export default async function EditMemberPage({
         mode="edit"
         memberId={member.id}
         defaultValues={{
+          title: member.title ?? "",
           firstName: member.firstName,
+          middleName: member.middleName ?? "",
           lastName: member.lastName,
-          otherNames: member.otherNames ?? "",
           sex: member.sex,
+          dateOfBirth: toDateInput(member.dateOfBirth),
+          placeOfBirth: member.placeOfBirth ?? "",
+          phone: member.phone ?? "",
+          email: member.email ?? "",
           assembly: member.assembly,
-          contact: member.contact ?? "",
-          photoUrl: member.photoUrl ?? "",
-          location: member.location ?? "",
-          motherName: member.motherName ?? "",
-          fatherName: member.fatherName ?? "",
-          position: member.position ?? "",
           status: member.status,
-          dateBaptised: member.dateBaptised
-            ? member.dateBaptised.toISOString().slice(0, 10)
-            : "",
-          baptisedBy: member.baptisedBy ?? "",
+          maritalStatus: member.maritalStatus,
+          addressLine1: member.addressLine1 ?? "",
+          gpsAddress: member.gpsAddress ?? "",
+          hometown: member.hometown ?? "",
+          streetName: member.streetName ?? "",
+          city: member.city ?? "",
+          holyGhostBaptism: member.holyGhostBaptism,
+          dateOfHolySpiritBaptism: toDateInput(member.dateOfHolySpiritBaptism),
+          waterBaptism: member.waterBaptism,
+          dateOfBaptism: toDateInput(member.dateOfBaptism),
+          dateOfConversion: toDateInput(member.dateOfConversion),
+          dateOfJoining: toDateInput(member.dateOfJoining),
+          placeOfBaptism: member.placeOfBaptism ?? "",
+          officiatingMinisterBaptism: member.officiatingMinisterBaptism ?? "",
+          officiatingMinisterDistrict:
+            member.officiatingMinisterDistrict ?? "",
+          communicant: member.communicant,
+          occupation: member.occupation ?? "",
+          educationLevel: member.educationLevel ?? "",
+          dedicated: member.dedicated,
+          dedicationDate: toDateInput(member.dedicationDate),
+          dedicationOfficiatingMinister:
+            member.dedicationOfficiatingMinister ?? "",
+          dedicationChurch: member.dedicationChurch ?? "",
+          photoUrl: member.photoUrl ?? "",
           updatedAt: member.updatedAt.toISOString(),
         }}
       />

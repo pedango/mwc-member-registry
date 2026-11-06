@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { fullName } from "@/lib/utils";
+import { formatMemberName } from "@/lib/utils";
 import { getServiceDate, serviceDateIso } from "@/lib/attendance";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       id: true,
       firstName: true,
       lastName: true,
-      otherNames: true,
+      middleName: true,
       assembly: true,
     },
   });
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   return Response.json({
     ok: true,
     alreadyCheckedIn: created.count === 0,
-    name: fullName(member),
+    name: formatMemberName(member),
     assembly: member.assembly,
     serviceDate: serviceDateIso(serviceDate),
   });
