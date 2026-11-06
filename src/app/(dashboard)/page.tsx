@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import {
   Building2,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import type { LogType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { getMemberStats } from "@/lib/member-stats";
 import { AUDIT_LABELS, describeAuditTarget } from "@/lib/audit-format";
 import { formatDateTime } from "@/lib/utils";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -20,6 +22,7 @@ import { StatCard } from "@/components/shared/StatCard";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { Numeric } from "@/components/shared/Numeric";
 import { Button } from "@/components/ui/button";
+import { StatSkeleton } from "@/components/shared/Skeleton";
 
 const LOG_ICONS: Record<LogType, LucideIcon> = {
   LOGIN: LogIn,
@@ -65,37 +68,7 @@ const QUICK_ACTIONS: Array<{
   },
 ];
 
-export default async function DashboardPage() {
-  const [byAssembly, officerCount, recentLogs] = await Promise.all([
-    prisma.member.groupBy({
-      by: ["assembly"],
-      _count: { _all: true },
-    }),
-    prisma.member.count({ where: { status: "OFFICER" } }),
-    prisma.auditLog.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        type: true,
-        createdAt: true,
-        targetInfo: true,
-        user: { select: { name: true, email: true } },
-      },
-    }),
-  ]);
-
-  const englishCount =
-    byAssembly.find((row) => row.assembly === "ENGLISH")?._count._all ?? 0;
-  const localCount =
-    byAssembly.find((row) => row.assembly === "LOCAL")?._count._all ?? 0;
-  const totalMembers = englishCount + localCount;
-
-  const share = (count: number) =>
-    totalMembers > 0
-      ? `${Math.round((count / totalMembers) * 100)}% of members`
-      : "No members yet";
-
+export default function DashboardPage() {
   return (
     <>
       <PageHeader
@@ -109,97 +82,33 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 3xl:gap-5">
-        <StatCard
-          accent="gold"
-          label="Total members (DISTRICT)"
-          value={totalMembers}
-          subtext="Across both assemblies"
-          icon={Users}
-          href="/members"
-        />
-        <StatCard
-          label="English Assembly"
-          value={englishCount}
-          subtext={share(englishCount)}
-          icon={Building2}
-          href="/assemblies?assembly=ENGLISH"
-        />
-        <StatCard
-          label="Local Assembly"
-          value={localCount}
-          subtext={share(localCount)}
-          icon={Building2}
-          href="/assemblies?assembly=LOCAL"
-        />
-        <StatCard
-          label="Officers"
-          value={officerCount}
-          subtext={share(officerCount)}
-          icon={UserCheck}
-          href="/members"
-        />
-      </div>
+      <Suspense
+        fallback={
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 3xl:gap-5">
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+          </div>
+        }
+      >
+        <DashboardStats />
+      </Suspense>
 
       <div className="grid items-stretch gap-4 xl:grid-cols-5 3xl:gap-6">
-        <SectionCard
-          className="xl:col-span-3"
-          title="Recent activity"
-          description="Latest logins and exports"
-          action={
-            <Button asChild variant="outline" size="sm">
-              <Link href="/logs">
-                <ScrollText className="h-4 w-4" aria-hidden="true" />
-                View logs
-              </Link>
-            </Button>
+        <Suspense
+          fallback={
+            <SectionCard
+              className="xl:col-span-3"
+              title="Recent activity"
+              description="Latest logins and exports"
+            >
+              <p className="type-body text-muted-foreground">Loading activity…</p>
+            </SectionCard>
           }
         >
-          {recentLogs.length === 0 ? (
-            <p className="type-body text-muted-foreground">No activity yet.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {recentLogs.map((log) => {
-                const Icon = LOG_ICONS[log.type];
-                return (
-                  <li
-                    key={log.id}
-                    className="-mx-2 flex items-start gap-3 rounded-xl px-2 py-3 transition-ui hover:bg-muted/70 sm:items-center"
-                  >
-                    <span
-                      className={
-                        log.type === "LOGIN"
-                          ? "shrink-0 rounded-xl bg-info-soft p-2 text-info-soft-fg"
-                          : "shrink-0 rounded-xl bg-primary/10 p-2 text-primary"
-                      }
-                    >
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                    </span>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-foreground">
-                        {AUDIT_LABELS[log.type]}
-                        <span className="ml-2 font-normal text-muted-foreground">
-                          {log.user.name || log.user.email}
-                        </span>
-                      </p>
-                      <p className="truncate type-caption">
-                        {describeAuditTarget(log.type, log.targetInfo)}
-                      </p>
-                      <Numeric className="mt-1 type-caption sm:hidden">
-                        {formatDateTime(log.createdAt)}
-                      </Numeric>
-                    </div>
-
-                    <Numeric className="hidden shrink-0 type-caption text-right sm:block">
-                      {formatDateTime(log.createdAt)}
-                    </Numeric>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </SectionCard>
+          <RecentActivity />
+        </Suspense>
 
         <SectionCard
           className="xl:col-span-2"
@@ -250,5 +159,124 @@ export default async function DashboardPage() {
         </SectionCard>
       </div>
     </>
+  );
+}
+
+async function DashboardStats() {
+  const { englishCount, localCount, officerCount, totalMembers } =
+    await getMemberStats();
+
+  const share = (count: number) =>
+    totalMembers > 0
+      ? `${Math.round((count / totalMembers) * 100)}% of members`
+      : "No members yet";
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 3xl:gap-5">
+      <StatCard
+        accent="gold"
+        label="Total members (DISTRICT)"
+        value={totalMembers}
+        subtext="Across both assemblies"
+        icon={Users}
+        href="/members"
+      />
+      <StatCard
+        label="English Assembly"
+        value={englishCount}
+        subtext={share(englishCount)}
+        icon={Building2}
+        href="/assemblies?assembly=ENGLISH"
+      />
+      <StatCard
+        label="Local Assembly"
+        value={localCount}
+        subtext={share(localCount)}
+        icon={Building2}
+        href="/assemblies?assembly=LOCAL"
+      />
+      <StatCard
+        label="Officers"
+        value={officerCount}
+        subtext={share(officerCount)}
+        icon={UserCheck}
+        href="/members"
+      />
+    </div>
+  );
+}
+
+async function RecentActivity() {
+  const recentLogs = await prisma.auditLog.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      type: true,
+      createdAt: true,
+      targetInfo: true,
+      user: { select: { name: true, email: true } },
+    },
+  });
+
+  return (
+    <SectionCard
+      className="xl:col-span-3"
+      title="Recent activity"
+      description="Latest logins and exports"
+      action={
+        <Button asChild variant="outline" size="sm">
+          <Link href="/logs">
+            <ScrollText className="h-4 w-4" aria-hidden="true" />
+            View logs
+          </Link>
+        </Button>
+      }
+    >
+      {recentLogs.length === 0 ? (
+        <p className="type-body text-muted-foreground">No activity yet.</p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {recentLogs.map((log) => {
+            const Icon = LOG_ICONS[log.type];
+            return (
+              <li
+                key={log.id}
+                className="-mx-2 flex items-start gap-3 rounded-xl px-2 py-3 transition-ui hover:bg-muted/70 sm:items-center"
+              >
+                <span
+                  className={
+                    log.type === "LOGIN"
+                      ? "shrink-0 rounded-xl bg-info-soft p-2 text-info-soft-fg"
+                      : "shrink-0 rounded-xl bg-primary/10 p-2 text-primary"
+                  }
+                >
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    {AUDIT_LABELS[log.type]}
+                    <span className="ml-2 font-normal text-muted-foreground">
+                      {log.user.name || log.user.email}
+                    </span>
+                  </p>
+                  <p className="truncate type-caption">
+                    {describeAuditTarget(log.type, log.targetInfo)}
+                  </p>
+                  <Numeric className="mt-1 type-caption sm:hidden">
+                    {formatDateTime(log.createdAt)}
+                  </Numeric>
+                </div>
+
+                <Numeric className="hidden shrink-0 type-caption text-right sm:block">
+                  {formatDateTime(log.createdAt)}
+                </Numeric>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </SectionCard>
   );
 }

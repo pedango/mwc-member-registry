@@ -3,17 +3,8 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { unauthorizedResponse } from "@/lib/session";
-import {
-  emptyToNull,
-  memberFormSchema,
-} from "@/lib/validations/member";
-import { invalidateMemberCaches } from "@/lib/redis";
-
-function parseDate(value?: string | null) {
-  if (!value) return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
+import { memberFormSchema, toMemberRecord } from "@/lib/validations/member";
+import { invalidateMemberStats } from "@/lib/member-stats";
 
 type Params = { params: { id: string } };
 
@@ -52,7 +43,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
       return Response.json({ error: "Member not found" }, { status: 404 });
     }
 
-    // Optimistic concurrency: if client sent updatedAt, ensure it matches
     if (parsed.data.updatedAt) {
       const clientUpdated = new Date(parsed.data.updatedAt).getTime();
       if (clientUpdated !== existing.updatedAt.getTime()) {
@@ -66,28 +56,12 @@ export async function PUT(req: NextRequest, { params }: Params) {
       }
     }
 
-    const data = parsed.data;
     const member = await prisma.member.update({
       where: { id: params.id },
-      data: {
-        firstName: data.firstName.trim(),
-        lastName: data.lastName.trim(),
-        otherNames: emptyToNull(data.otherNames),
-        sex: data.sex,
-        assembly: data.assembly,
-        contact: emptyToNull(data.contact),
-        photoUrl: emptyToNull(data.photoUrl) || null,
-        location: emptyToNull(data.location),
-        motherName: emptyToNull(data.motherName),
-        fatherName: emptyToNull(data.fatherName),
-        position: emptyToNull(data.position),
-        status: data.status,
-        dateBaptised: parseDate(data.dateBaptised),
-        baptisedBy: emptyToNull(data.baptisedBy),
-      },
+      data: toMemberRecord(parsed.data),
     });
 
-    await invalidateMemberCaches();
+    await invalidateMemberStats();
     return Response.json({ member });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
@@ -104,7 +78,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
   try {
     await prisma.member.delete({ where: { id: params.id } });
-    await invalidateMemberCaches();
+    await invalidateMemberStats();
     return Response.json({ success: true });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
