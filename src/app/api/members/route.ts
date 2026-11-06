@@ -6,28 +6,28 @@ import { unauthorizedResponse } from "@/lib/session";
 import {
   emptyToNull,
   memberFormSchema,
+  toMemberRecord,
 } from "@/lib/validations/member";
-import { invalidateMemberCaches } from "@/lib/redis";
-import { fullName } from "@/lib/utils";
+import { invalidateMemberStats } from "@/lib/member-stats";
+import { formatMemberName } from "@/lib/utils";
 import { memberDirectoryWhere } from "@/lib/member-search";
+import { MEMBER_LIST_ORDER_BY, MEMBER_LIST_SELECT } from "@/lib/member-list";
 
-function parseDate(value?: string | null) {
-  if (!value) return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-async function findDuplicate(firstName: string, lastName: string, otherNames?: string | null) {
-  const others = emptyToNull(otherNames);
+async function findDuplicate(
+  firstName: string,
+  lastName: string,
+  middleName?: string | null
+) {
+  const middle = emptyToNull(middleName);
   return prisma.member.findFirst({
     where: {
       AND: [
         { firstName: { equals: firstName, mode: "insensitive" } },
         { lastName: { equals: lastName, mode: "insensitive" } },
-        others
-          ? { otherNames: { equals: others, mode: "insensitive" } }
+        middle
+          ? { middleName: { equals: middle, mode: "insensitive" } }
           : {
-              OR: [{ otherNames: null }, { otherNames: "" }],
+              OR: [{ middleName: null }, { middleName: "" }],
             },
       ],
     },
@@ -54,10 +54,10 @@ export async function GET(req: NextRequest) {
     prisma.member.count({ where }),
     prisma.member.findMany({
       where,
-      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      orderBy: [...MEMBER_LIST_ORDER_BY],
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: { createdBy: { select: { id: true, name: true, email: true } } },
+      select: MEMBER_LIST_SELECT,
     }),
   ]);
 
@@ -83,13 +83,13 @@ export async function POST(req: NextRequest) {
       const duplicate = await findDuplicate(
         data.firstName,
         data.lastName,
-        data.otherNames
+        data.middleName
       );
       if (duplicate) {
         return Response.json(
           {
             duplicate: true,
-            message: `A member named ${fullName(duplicate)} already exists. Add anyway?`,
+            message: `A member named ${formatMemberName(duplicate)} already exists. Add anyway?`,
             existingId: duplicate.id,
           },
           { status: 409 }
@@ -99,25 +99,12 @@ export async function POST(req: NextRequest) {
 
     const member = await prisma.member.create({
       data: {
-        firstName: data.firstName.trim(),
-        lastName: data.lastName.trim(),
-        otherNames: emptyToNull(data.otherNames),
-        sex: data.sex,
-        assembly: data.assembly,
-        contact: emptyToNull(data.contact),
-        photoUrl: emptyToNull(data.photoUrl) || null,
-        location: emptyToNull(data.location),
-        motherName: emptyToNull(data.motherName),
-        fatherName: emptyToNull(data.fatherName),
-        position: emptyToNull(data.position),
-        status: data.status,
-        dateBaptised: parseDate(data.dateBaptised),
-        baptisedBy: emptyToNull(data.baptisedBy),
+        ...toMemberRecord(data),
         createdById: session.user.id,
       },
     });
 
-    await invalidateMemberCaches();
+    await invalidateMemberStats();
     return Response.json({ member }, { status: 201 });
   } catch (err) {
     console.error(err);

@@ -1,11 +1,14 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { memberDirectoryWhere } from "@/lib/member-search";
+import {
+  MEMBER_LIST_ORDER_BY,
+  MEMBER_LIST_PAGE_SIZE,
+  MEMBER_LIST_SELECT,
+} from "@/lib/member-list";
 import { Button } from "@/components/ui/button";
 import { MembersTable } from "@/components/members/MembersTable";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { TableSkeleton } from "@/components/shared/Skeleton";
 
 export default async function MembersPage({
   searchParams,
@@ -14,17 +17,17 @@ export default async function MembersPage({
 }) {
   const q = searchParams.q?.trim() ?? "";
   const page = Math.max(1, Number(searchParams.page || 1));
-  const pageSize = 10;
-
+  const pageSize = MEMBER_LIST_PAGE_SIZE;
   const where = memberDirectoryWhere(q);
 
   const [total, members] = await Promise.all([
     prisma.member.count({ where }),
     prisma.member.findMany({
       where,
-      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      orderBy: [...MEMBER_LIST_ORDER_BY],
       skip: (page - 1) * pageSize,
       take: pageSize,
+      select: MEMBER_LIST_SELECT,
     }),
   ]);
 
@@ -32,22 +35,20 @@ export default async function MembersPage({
     <>
       <PageHeader title="Members" />
 
-      <Suspense fallback={<TableSkeleton />}>
-        <MembersTable
-          members={members.map((m) => ({
-            ...m,
-            createdAt: m.createdAt.toISOString(),
-          }))}
-          total={total}
-          page={page}
-          pageSize={pageSize}
-          action={
-            <Button asChild>
-              <Link href="/members/new">Add member</Link>
-            </Button>
-          }
-        />
-      </Suspense>
+      <MembersTable
+        members={members.map((m) => ({
+          ...m,
+          createdAt: m.createdAt.toISOString(),
+        }))}
+        total={total}
+        page={page}
+        pageSize={pageSize}
+        action={
+          <Button asChild>
+            <Link href="/members/new">Add member</Link>
+          </Button>
+        }
+      />
     </>
   );
 }
