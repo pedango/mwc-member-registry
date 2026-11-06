@@ -1,13 +1,13 @@
 import { auth } from "@/lib/auth";
 import { unauthorizedResponse } from "@/lib/session";
 import { buildMemberTemplateBuffer } from "@/lib/xlsx";
-import { createAuditLog } from "@/lib/audit";
+import { enqueueAuditLog } from "@/lib/audit";
 
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) return unauthorizedResponse();
 
-  await createAuditLog({
+  enqueueAuditLog({
     userId: session.user.id,
     type: "EXPORT_BULK",
     targetInfo: "template download",
