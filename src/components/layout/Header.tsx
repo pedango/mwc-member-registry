@@ -63,7 +63,7 @@ export function Header({
         <Button
           variant="ghost"
           size="sm"
-          className="min-h-touch text-muted-foreground hover:text-foreground"
+          className="min-h-touch text-destructive hover:bg-destructive/10 hover:text-destructive focus-visible:text-destructive focus-visible:ring-destructive dark:text-destructive dark:hover:bg-destructive/20 dark:hover:text-destructive"
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
           <LogOut className="h-4 w-4" aria-hidden="true" />
