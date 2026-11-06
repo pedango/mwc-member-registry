@@ -54,7 +54,12 @@ export default async function LogsPage({
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: { user: { select: { name: true, email: true } } },
+      select: {
+        id: true,
+        type: true,
+        createdAt: true,
+        user: { select: { name: true, email: true } },
+      },
     }),
   ]);
 

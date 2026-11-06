@@ -23,6 +23,13 @@ enum MemberStatus {
   OFFICER
 }
 
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
 enum LogType {
   LOGIN
   EXPORT_SINGLE
@@ -40,31 +47,60 @@ model User {
 }
 
 model Member {
-  id           String       @id @default(cuid())
+  id           String    @id @default(cuid())
+  title        String?
   firstName    String
+  middleName   String?
   lastName     String
-  otherNames   String?
   sex          Sex
-  assembly     Assembly
-  contact      String?
-  photoUrl     String?
-  location     String?
-  motherName   String?
-  fatherName   String?
-  position     String?
-  status       MemberStatus @default(MEMBER)
-  dateBaptised DateTime?
-  baptisedBy   String?
-  createdById  String?
-  createdBy    User?        @relation("CreatedByUser", fields: [createdById], references: [id])
-  attendances  Attendance[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  dateOfBirth  DateTime?
+  placeOfBirth String?
+
+  phone String?
+  email String?
+
+  assembly      Assembly
+  status        MemberStatus   @default(MEMBER)
+  maritalStatus MaritalStatus?
+
+  addressLine1 String?
+  gpsAddress   String?
+  hometown     String?
+  streetName   String?
+  city         String?
+
+  holyGhostBaptism            Boolean?
+  dateOfHolySpiritBaptism     DateTime?
+  waterBaptism                Boolean?
+  dateOfBaptism               DateTime?
+  dateOfConversion            DateTime?
+  dateOfJoining               DateTime?
+  placeOfBaptism              String?
+  officiatingMinisterBaptism  String?
+  officiatingMinisterDistrict String?
+  communicant                 Boolean?
+
+  occupation                    String?
+  educationLevel                String?
+  dedicated                     Boolean?
+  dedicationDate                DateTime?
+  dedicationOfficiatingMinister String?
+  dedicationChurch              String?
+
+  photoUrl String?
+
+  createdById String?
+  createdBy   User?        @relation("CreatedByUser", fields: [createdById], references: [id])
+  attendances Attendance[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@index([assembly])
   @@index([lastName, firstName])
-  @@index([location])
-  @@index([contact])
+  @@index([phone])
+  @@index([email])
+  @@index([status])
+  @@index([createdById])
 }
 
 model AuditLog {
@@ -77,6 +113,7 @@ model AuditLog {
 
   @@index([type])
   @@index([createdAt])
+  @@index([userId])
 }
 
 model Attendance {

@@ -25,7 +25,11 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: {
+      select: {
+        id: true,
+        type: true,
+        targetInfo: true,
+        createdAt: true,
         user: { select: { id: true, name: true, email: true } },
       },
     }),
