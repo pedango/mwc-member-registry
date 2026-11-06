@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { compressImageDataUrl, compressImageFile } from "@/lib/compress-image";
 
 export function PhotoUploader({
   photoUrl,
@@ -46,11 +47,12 @@ export function PhotoUploader({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") uploadData(reader.result);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const dataUrl = await compressImageFile(file);
+      await uploadData(dataUrl);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not read image");
+    }
   }
 
   return (
@@ -129,10 +131,11 @@ export function PhotoUploader({
 }
 
 export async function uploadCapturedPhoto(dataUrl: string) {
+  const compressed = await compressImageDataUrl(dataUrl);
   const res = await fetch("/api/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ dataUrl }),
+    body: JSON.stringify({ dataUrl: compressed }),
   });
   const json = await res.json();
   if (!res.ok) throw new Error(json.error || "Upload failed");
