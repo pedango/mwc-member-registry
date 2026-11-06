@@ -1,10 +1,11 @@
 import { hash } from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
+import { BCRYPT_COST } from "../src/lib/password";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const password = await hash("admin@123", 12);
+  const password = await hash("admin@123", BCRYPT_COST);
 
   const admins = [
     { email: "admin1@mwc.org", name: "Elder Domfeh", password },
