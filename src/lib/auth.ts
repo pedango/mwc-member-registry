@@ -1,9 +1,11 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
+import { compare, getRounds, hash } from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { createAuditLog } from "@/lib/audit";
+import { enqueueAuditLog } from "@/lib/audit";
+import { authConfig } from "@/lib/auth.config";
+import { BCRYPT_COST } from "@/lib/password";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -11,6 +13,7 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
     Credentials({
       name: "Credentials",
@@ -32,6 +35,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const valid = await compare(parsed.data.password, user.password);
         if (!valid) return null;
 
+        let storedRounds = 0;
+        try {
+          storedRounds = getRounds(user.password);
+        } catch {
+          storedRounds = 0;
+        }
+        if (storedRounds !== BCRYPT_COST) {
+          const nextHash = await hash(parsed.data.password, BCRYPT_COST);
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { password: nextHash },
+          });
+        }
+
         return {
           id: user.id,
           email: user.email,
@@ -40,39 +57,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = (token.name as string) ?? null;
-      }
-      return session;
-    },
-  },
   events: {
     signIn({ user }) {
       if (!user?.id) return;
-      void createAuditLog({
+      enqueueAuditLog({
         userId: user.id,
         type: "LOGIN",
         targetInfo: user.email ?? undefined,
-      }).catch(() => {
-        // Don't block login if audit write fails
       });
     },
   },
-  trustHost: true,
 });

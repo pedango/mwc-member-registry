@@ -1,5 +1,8 @@
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
+import { authConfig } from "@/lib/auth.config";
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
@@ -9,8 +12,6 @@ export default auth((req) => {
   const isPublicCheckIn =
     pathname === "/check-in" || pathname.startsWith("/api/check-in");
 
-  // Static files under /public must never be gated — a redirect returns HTML
-  // and shows up as a broken <img> in the browser.
   const isPublicAsset =
     pathname.startsWith("/logos") ||
     pathname.startsWith("/images") ||
@@ -36,6 +37,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  // Skip Next internals and any path with a file extension (static assets).
   matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };
