@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { fullName } from "@/lib/utils";
+import { formatMemberName } from "@/lib/utils";
 import { getServiceDate } from "@/lib/attendance";
+import { memberNameSearchWhere } from "@/lib/member-search";
+import { MEMBER_LIST_ORDER_BY } from "@/lib/member-list";
+import { cloudinaryThumbUrl } from "@/lib/cloudinary-url";
 
 export const dynamic = "force-dynamic";
 
@@ -14,27 +16,17 @@ export async function GET(req: NextRequest) {
     return Response.json({ members: [] });
   }
 
-  const tokens = q.split(/\s+/).filter(Boolean).slice(0, 4);
-  const where: Prisma.MemberWhereInput = {
-    AND: tokens.map((token) => ({
-      OR: [
-        { firstName: { contains: token, mode: "insensitive" } },
-        { lastName: { contains: token, mode: "insensitive" } },
-        { otherNames: { contains: token, mode: "insensitive" } },
-      ],
-    })),
-  };
-
+  const where = memberNameSearchWhere(q);
   const serviceDate = getServiceDate();
   const members = await prisma.member.findMany({
     where,
     take: MAX_RESULTS,
-    orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    orderBy: [...MEMBER_LIST_ORDER_BY],
     select: {
       id: true,
       firstName: true,
       lastName: true,
-      otherNames: true,
+      middleName: true,
       assembly: true,
       photoUrl: true,
     },
@@ -56,9 +48,9 @@ export async function GET(req: NextRequest) {
     serviceDate: serviceDate.toISOString().slice(0, 10),
     members: members.map((member) => ({
       id: member.id,
-      name: fullName(member),
+      name: formatMemberName(member),
       assembly: member.assembly,
-      photoUrl: member.photoUrl,
+      photoUrl: cloudinaryThumbUrl(member.photoUrl, 80),
       alreadyCheckedIn: present.has(member.id),
     })),
   });
