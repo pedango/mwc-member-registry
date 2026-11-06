@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Logo } from "@/components/shared/Logo";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 export default function LoginClient() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [email, setEmail] = useState("");
@@ -38,7 +39,8 @@ export default function LoginClient() {
       }
 
       toast.success("Welcome back");
-      window.location.assign(callbackUrl);
+      router.replace(callbackUrl);
+      router.refresh();
     } catch {
       setError("Unable to sign in. Please try again.");
       setLoading(false);
