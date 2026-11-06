@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { Building2, Check, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { cn, fullName } from "@/lib/utils";
+import { cn, formatMemberName } from "@/lib/utils";
+import {
+  ASSEMBLY_ROLL_PAGE_SIZE,
+  MEMBER_LIST_ORDER_BY,
+  MEMBER_LIST_SELECT,
+} from "@/lib/member-list";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -9,6 +14,7 @@ import { SectionCard } from "@/components/shared/SectionCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Avatar } from "@/components/shared/Avatar";
 import { Numeric } from "@/components/shared/Numeric";
+import { Pagination } from "@/components/shared/Pagination";
 import {
   DataTable,
   TBody,
@@ -22,22 +28,30 @@ import {
 export default async function AssembliesPage({
   searchParams,
 }: {
-  searchParams: { assembly?: string };
+  searchParams: { assembly?: string; page?: string };
 }) {
   const selected =
     searchParams.assembly === "LOCAL" || searchParams.assembly === "ENGLISH"
       ? searchParams.assembly
       : null;
+  const page = Math.max(1, Number(searchParams.page || 1));
+  const pageSize = ASSEMBLY_ROLL_PAGE_SIZE;
 
-  const [englishCount, localCount, members] = await Promise.all([
+  const [englishCount, localCount, members, rollTotal] = await Promise.all([
     prisma.member.count({ where: { assembly: "ENGLISH" } }),
     prisma.member.count({ where: { assembly: "LOCAL" } }),
     selected
       ? prisma.member.findMany({
           where: { assembly: selected },
-          orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+          orderBy: [...MEMBER_LIST_ORDER_BY],
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          select: MEMBER_LIST_SELECT,
         })
       : Promise.resolve([]),
+    selected
+      ? prisma.member.count({ where: { assembly: selected } })
+      : Promise.resolve(0),
   ]);
 
   const total = englishCount + localCount;
@@ -45,6 +59,14 @@ export default async function AssembliesPage({
     { key: "ENGLISH", label: "English Assembly", count: englishCount },
     { key: "LOCAL", label: "Local Assembly", count: localCount },
   ] as const;
+
+  const hrefFor = (nextPage: number) => {
+    if (!selected) return "/assemblies";
+    const params = new URLSearchParams();
+    params.set("assembly", selected);
+    if (nextPage > 1) params.set("page", String(nextPage));
+    return `/assemblies?${params.toString()}`;
+  };
 
   return (
     <>
@@ -62,7 +84,9 @@ export default async function AssembliesPage({
           return (
             <Link
               key={item.key}
-              href={isSelected ? "/assemblies" : `/assemblies?assembly=${item.key}`}
+              href={
+                isSelected ? "/assemblies" : `/assemblies?assembly=${item.key}`
+              }
               aria-current={isSelected ? "true" : undefined}
               className={cn(
                 "group flex items-start justify-between gap-4 p-4 transition-ui sm:p-5",
@@ -111,8 +135,8 @@ export default async function AssembliesPage({
           title={`${
             selected === "ENGLISH" ? "English" : "Local"
           } Assembly roll`}
-          description={`${members.length} member${
-            members.length === 1 ? "" : "s"
+          description={`${rollTotal} member${
+            rollTotal === 1 ? "" : "s"
           } in this assembly`}
           action={
             <Button asChild variant="outline" size="sm">
@@ -120,7 +144,7 @@ export default async function AssembliesPage({
             </Button>
           }
         >
-          {members.length === 0 ? (
+          {rollTotal === 0 ? (
             <div className="px-5 pb-6 md:px-6">
               <EmptyState
                 variant="bare"
@@ -136,67 +160,75 @@ export default async function AssembliesPage({
             </div>
           ) : (
             <>
-            <ul className="divide-y divide-border border-t border-border md:hidden">
-              {members.map((m) => {
-                const name = fullName(m);
-                return (
-                  <li key={m.id}>
-                    <Link
-                      href={`/members/${m.id}`}
-                      className="flex items-center gap-3 px-4 py-3"
-                    >
-                      <Avatar src={m.photoUrl} name={name} size="sm" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate font-medium text-foreground">
-                          {name}
+              <ul className="divide-y divide-border border-t border-border md:hidden">
+                {members.map((m) => {
+                  const name = formatMemberName(m);
+                  return (
+                    <li key={m.id}>
+                      <Link
+                        href={`/members/${m.id}`}
+                        className="flex items-center gap-3 px-4 py-3"
+                      >
+                        <Avatar src={m.photoUrl} name={name} size="sm" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-medium text-foreground">
+                            {name}
+                          </span>
+                          <span className="block truncate type-caption">
+                            {m.phone || "No phone"}
+                          </span>
                         </span>
-                        <span className="block truncate type-caption">
-                          {m.contact || "No contact"}
-                        </span>
-                      </span>
-                      <StatusBadge status={m.status} />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-            <TableScroller className="hidden border-t border-border md:block">
-              <DataTable>
-                <THead>
-                  <tr>
-                    <Th>Member</Th>
-                    <Th className="hidden lg:table-cell">Contact</Th>
-                    <Th align="right">Status</Th>
-                  </tr>
-                </THead>
-                <TBody>
-                  {members.map((m) => {
-                    const name = fullName(m);
-                    return (
-                      <Tr key={m.id}>
-                        <Td>
-                          <Link
-                            href={`/members/${m.id}`}
-                            className="flex min-w-0 items-center gap-3 rounded-md"
-                          >
-                            <Avatar src={m.photoUrl} name={name} size="sm" />
-                            <span className="truncate font-medium text-foreground">
-                              {name}
-                            </span>
-                          </Link>
-                        </Td>
-                        <Td muted className="hidden lg:table-cell">
-                          {m.contact || "—"}
-                        </Td>
-                        <Td align="right">
-                          <StatusBadge status={m.status} />
-                        </Td>
-                      </Tr>
-                    );
-                  })}
-                </TBody>
-              </DataTable>
-            </TableScroller>
+                        <StatusBadge status={m.status} />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <TableScroller className="hidden border-t border-border md:block">
+                <DataTable>
+                  <THead>
+                    <tr>
+                      <Th>Member</Th>
+                      <Th className="hidden lg:table-cell">Phone</Th>
+                      <Th align="right">Status</Th>
+                    </tr>
+                  </THead>
+                  <TBody>
+                    {members.map((m) => {
+                      const name = formatMemberName(m);
+                      return (
+                        <Tr key={m.id}>
+                          <Td>
+                            <Link
+                              href={`/members/${m.id}`}
+                              className="flex min-w-0 items-center gap-3 rounded-md"
+                            >
+                              <Avatar src={m.photoUrl} name={name} size="sm" />
+                              <span className="truncate font-medium text-foreground">
+                                {name}
+                              </span>
+                            </Link>
+                          </Td>
+                          <Td muted className="hidden lg:table-cell">
+                            {m.phone || "—"}
+                          </Td>
+                          <Td align="right">
+                            <StatusBadge status={m.status} />
+                          </Td>
+                        </Tr>
+                      );
+                    })}
+                  </TBody>
+                </DataTable>
+              </TableScroller>
+              <div className="border-t border-border bg-muted/50 px-5 py-3 md:px-6">
+                <Pagination
+                  page={page}
+                  pageSize={pageSize}
+                  total={rollTotal}
+                  hrefFor={hrefFor}
+                />
+              </div>
             </>
           )}
         </SectionCard>
