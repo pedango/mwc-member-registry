@@ -24,6 +24,7 @@ import {
   MARITAL_STATUS_OPTIONS,
   TITLE_OPTIONS,
   PROFILE_MAX_LENGTH,
+  memberFieldLabel,
   memberFormSchema,
   type MemberFormValues,
 } from "@/lib/validations/member";
@@ -328,7 +329,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
           <div className="space-y-6">
             <FormSection step={1} title="Personal info" icon={User}>
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Title">
+                <Field label={memberFieldLabel("title")}>
                   <OptionalSelect
                     value={values.title}
                     placeholder="Select title"
@@ -342,7 +343,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                   />
                 </Field>
                 <Field
-                  label="First name"
+                  label={memberFieldLabel("firstName")}
                   error={form.formState.errors.firstName?.message}
                   required
                 >
@@ -352,11 +353,11 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     aria-invalid={!!form.formState.errors.firstName}
                   />
                 </Field>
-                <Field label="Middle name">
+                <Field label={memberFieldLabel("middleName")}>
                   <Input {...form.register("middleName")} />
                 </Field>
                 <Field
-                  label="Last name"
+                  label={memberFieldLabel("lastName")}
                   error={form.formState.errors.lastName?.message}
                   required
                 >
@@ -366,7 +367,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     aria-invalid={!!form.formState.errors.lastName}
                   />
                 </Field>
-                <Field label="Gender" required>
+                <Field label={memberFieldLabel("sex")} required>
                   <Select
                     value={form.watch("sex")}
                     onValueChange={(v) =>
@@ -385,7 +386,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                   </Select>
                 </Field>
                 <Field
-                  label="Date of birth"
+                  label={memberFieldLabel("dateOfBirth")}
                   error={form.formState.errors.dateOfBirth?.message}
                   required
                 >
@@ -395,10 +396,10 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     aria-invalid={!!form.formState.errors.dateOfBirth}
                   />
                 </Field>
-                <Field label="Place of birth">
+                <Field label={memberFieldLabel("placeOfBirth")}>
                   <Input {...form.register("placeOfBirth")} />
                 </Field>
-                <Field label="Marital status">
+                <Field label={memberFieldLabel("maritalStatus")}>
                   <OptionalSelect
                     value={values.maritalStatus}
                     placeholder="Select marital status"
@@ -417,7 +418,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
 
             <FormSection step={2} title="Church info" icon={Building2}>
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Assembly" required>
+                <Field label={memberFieldLabel("assembly")} required>
                   <Select
                     value={form.watch("assembly")}
                     onValueChange={(v) =>
@@ -435,7 +436,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     </SelectContent>
                   </Select>
                 </Field>
-                <Field label="Member type" required>
+                <Field label={memberFieldLabel("status")} required>
                   <Select
                     value={form.watch("status")}
                     onValueChange={(v) =>
@@ -458,11 +459,11 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
 
             <FormSection step={3} title="Contact & address" icon={Phone}>
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Phone">
+                <Field label={memberFieldLabel("phone")}>
                   <Input {...form.register("phone")} placeholder="024..." />
                 </Field>
                 <Field
-                  label="Email"
+                  label={memberFieldLabel("email")}
                   error={form.formState.errors.email?.message}
                 >
                   <Input
@@ -472,22 +473,22 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     aria-invalid={!!form.formState.errors.email}
                   />
                 </Field>
-                <Field label="Address line 1" className="md:col-span-2">
+                <Field label={memberFieldLabel("addressLine1")} className="md:col-span-2">
                   <Input {...form.register("addressLine1")} />
                 </Field>
-                <Field label="Street name">
+                <Field label={memberFieldLabel("streetName")}>
                   <Input {...form.register("streetName")} />
                 </Field>
-                <Field label="City">
+                <Field label={memberFieldLabel("city")}>
                   <Input {...form.register("city")} />
                 </Field>
-                <Field label="GPS address">
+                <Field label={memberFieldLabel("gpsAddress")}>
                   <Input
                     {...form.register("gpsAddress")}
                     placeholder="GA-123-4567"
                   />
                 </Field>
-                <Field label="Hometown">
+                <Field label={memberFieldLabel("hometown")}>
                   <Input {...form.register("hometown")} />
                 </Field>
               </div>
@@ -500,7 +501,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
               hint="Optional"
             >
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Holy Ghost baptism">
+                <Field label={memberFieldLabel("holyGhostBaptism")}>
                   <YesNoSelect
                     value={values.holyGhostBaptism}
                     onChange={(value) =>
@@ -510,13 +511,13 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     }
                   />
                 </Field>
-                <Field label="Date of Holy Spirit baptism">
+                <Field label={memberFieldLabel("dateOfHolySpiritBaptism")}>
                   <Input
                     type="date"
                     {...form.register("dateOfHolySpiritBaptism")}
                   />
                 </Field>
-                <Field label="Water baptism">
+                <Field label={memberFieldLabel("waterBaptism")}>
                   <YesNoSelect
                     value={values.waterBaptism}
                     onChange={(value) =>
@@ -526,19 +527,19 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     }
                   />
                 </Field>
-                <Field label="Date of baptism">
+                <Field label={memberFieldLabel("dateOfBaptism")}>
                   <Input type="date" {...form.register("dateOfBaptism")} />
                 </Field>
-                <Field label="Date of conversion">
+                <Field label={memberFieldLabel("dateOfConversion")}>
                   <Input type="date" {...form.register("dateOfConversion")} />
                 </Field>
-                <Field label="Date of joining us">
+                <Field label={memberFieldLabel("dateOfJoining")}>
                   <Input type="date" {...form.register("dateOfJoining")} />
                 </Field>
-                <Field label="Place of baptism">
+                <Field label={memberFieldLabel("placeOfBaptism")}>
                   <Input {...form.register("placeOfBaptism")} />
                 </Field>
-                <Field label="Communicant">
+                <Field label={memberFieldLabel("communicant")}>
                   <YesNoSelect
                     value={values.communicant}
                     onChange={(value) =>
@@ -548,10 +549,10 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     }
                   />
                 </Field>
-                <Field label="Officiating minister (baptism)">
+                <Field label={memberFieldLabel("officiatingMinisterBaptism")}>
                   <Input {...form.register("officiatingMinisterBaptism")} />
                 </Field>
-                <Field label="Officiating minister's district / church">
+                <Field label={memberFieldLabel("officiatingMinisterDistrict")}>
                   <Input {...form.register("officiatingMinisterDistrict")} />
                 </Field>
               </div>
@@ -564,7 +565,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
               hint="Optional"
             >
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Dedicated">
+                <Field label={memberFieldLabel("dedicated")}>
                   <YesNoSelect
                     value={values.dedicated}
                     onChange={(value) =>
@@ -572,15 +573,15 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
                     }
                   />
                 </Field>
-                <Field label="Dedication date">
+                <Field label={memberFieldLabel("dedicationDate")}>
                   <Input type="date" {...form.register("dedicationDate")} />
                 </Field>
-                <Field label="Name of officiating minister">
+                <Field label={memberFieldLabel("dedicationOfficiatingMinister")}>
                   <Input
                     {...form.register("dedicationOfficiatingMinister")}
                   />
                 </Field>
-                <Field label="Church where dedication was done">
+                <Field label={memberFieldLabel("dedicationChurch")}>
                   <Input {...form.register("dedicationChurch")} />
                 </Field>
               </div>
@@ -588,10 +589,10 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
 
             <FormSection step={6} title="Work & education" icon={Briefcase}>
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Occupation">
+                <Field label={memberFieldLabel("occupation")}>
                   <Input {...form.register("occupation")} />
                 </Field>
-                <Field label="Level of education">
+                <Field label={memberFieldLabel("educationLevel")}>
                   <OptionalSelect
                     value={values.educationLevel}
                     placeholder="Select education level"
@@ -616,7 +617,7 @@ export function MemberForm({ mode, memberId, defaultValues }: Props) {
               hint="Optional"
             >
               <Field
-                label="Profile"
+                label={memberFieldLabel("profile")}
                 error={form.formState.errors.profile?.message}
                 hint="Longer notes, testimony, or background. Up to 10,000 characters."
               >

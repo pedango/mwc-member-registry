@@ -5,6 +5,7 @@ import {
   formatMaritalStatus,
   formatYesNo,
 } from "@/lib/utils";
+import { memberFieldLabel } from "@/lib/validations/member";
 
 type ExportMember = {
   title?: string | null;
@@ -138,12 +139,12 @@ export async function buildMemberPdf(member: ExportMember) {
       color: primary,
     });
     page.drawText(String(value || "—"), {
-      x: 230,
+      x: 268,
       y,
       size: 10,
       font: fontFace,
       color: text,
-      maxWidth: 320,
+      maxWidth: 287,
     });
     y -= 18;
   }
@@ -232,61 +233,94 @@ export async function buildMemberPdf(member: ExportMember) {
     [
       "Personal",
       [
-        ["Title", display(member.title)],
-        ["Gender", member.sex === "FEMALE" ? "Female" : "Male"],
-        ["Date of birth", formatDate(member.dateOfBirth)],
-        ["Place of birth", display(member.placeOfBirth)],
-        ["Marital status", formatMaritalStatus(member.maritalStatus) || "—"],
+        [memberFieldLabel("title"), display(member.title)],
+        [memberFieldLabel("sex"), member.sex === "FEMALE" ? "Female" : "Male"],
+        [memberFieldLabel("dateOfBirth"), formatDate(member.dateOfBirth)],
+        [memberFieldLabel("placeOfBirth"), display(member.placeOfBirth)],
+        [
+          memberFieldLabel("maritalStatus"),
+          formatMaritalStatus(member.maritalStatus) || "—",
+        ],
       ],
     ],
     [
       "Contact & address",
       [
-        ["Phone", display(member.phone)],
-        ["Email", display(member.email)],
-        ["Address line 1", display(member.addressLine1)],
-        ["Street name", display(member.streetName)],
-        ["City", display(member.city)],
-        ["GPS address", display(member.gpsAddress)],
-        ["Hometown", display(member.hometown)],
+        [memberFieldLabel("phone"), display(member.phone)],
+        [memberFieldLabel("email"), display(member.email)],
+        [memberFieldLabel("addressLine1"), display(member.addressLine1)],
+        [memberFieldLabel("streetName"), display(member.streetName)],
+        [memberFieldLabel("city"), display(member.city)],
+        [memberFieldLabel("gpsAddress"), display(member.gpsAddress)],
+        [memberFieldLabel("hometown"), display(member.hometown)],
       ],
     ],
     [
       "Church",
       [
-        ["Member type", member.status === "OFFICER" ? "Officer" : "Member"],
-        ["Assembly", member.assembly === "ENGLISH" ? "English" : "Local"],
+        [
+          memberFieldLabel("status"),
+          member.status === "OFFICER" ? "Officer" : "Member",
+        ],
+        [
+          memberFieldLabel("assembly"),
+          member.assembly === "ENGLISH" ? "English" : "Local",
+        ],
       ],
     ],
     [
       "Baptism & faith",
       [
-        ["Holy Ghost baptism", formatYesNo(member.holyGhostBaptism) || "—"],
-        ["Date of Holy Spirit baptism", formatDate(member.dateOfHolySpiritBaptism)],
-        ["Water baptism", formatYesNo(member.waterBaptism) || "—"],
-        ["Date of baptism", formatDate(member.dateOfBaptism)],
-        ["Date of conversion", formatDate(member.dateOfConversion)],
-        ["Date of joining", formatDate(member.dateOfJoining)],
-        ["Place of baptism", display(member.placeOfBaptism)],
-        ["Officiating minister", display(member.officiatingMinisterBaptism)],
-        ["Minister's district/church", display(member.officiatingMinisterDistrict)],
-        ["Communicant", formatYesNo(member.communicant) || "—"],
+        [
+          memberFieldLabel("holyGhostBaptism"),
+          formatYesNo(member.holyGhostBaptism) || "—",
+        ],
+        [
+          memberFieldLabel("dateOfHolySpiritBaptism"),
+          formatDate(member.dateOfHolySpiritBaptism),
+        ],
+        [
+          memberFieldLabel("waterBaptism"),
+          formatYesNo(member.waterBaptism) || "—",
+        ],
+        [memberFieldLabel("dateOfBaptism"), formatDate(member.dateOfBaptism)],
+        [
+          memberFieldLabel("dateOfConversion"),
+          formatDate(member.dateOfConversion),
+        ],
+        [memberFieldLabel("dateOfJoining"), formatDate(member.dateOfJoining)],
+        [memberFieldLabel("placeOfBaptism"), display(member.placeOfBaptism)],
+        [
+          memberFieldLabel("officiatingMinisterBaptism"),
+          display(member.officiatingMinisterBaptism),
+        ],
+        [
+          memberFieldLabel("officiatingMinisterDistrict"),
+          display(member.officiatingMinisterDistrict),
+        ],
+        [memberFieldLabel("communicant"), formatYesNo(member.communicant) || "—"],
       ],
     ],
     [
       "Dedication",
       [
-        ["Dedicated", formatYesNo(member.dedicated) || "—"],
-        ["Dedication date", formatDate(member.dedicationDate)],
-        ["Officiating minister", display(member.dedicationOfficiatingMinister)],
-        ["Church of dedication", display(member.dedicationChurch)],
+        [memberFieldLabel("dedicated"), formatYesNo(member.dedicated) || "—"],
+        [memberFieldLabel("dedicationDate"), formatDate(member.dedicationDate)],
+        [
+          memberFieldLabel("dedicationOfficiatingMinister"),
+          display(member.dedicationOfficiatingMinister),
+        ],
+        [
+          memberFieldLabel("dedicationChurch"),
+          display(member.dedicationChurch),
+        ],
       ],
     ],
     [
       "Work & education",
       [
-        ["Occupation", display(member.occupation)],
-        ["Level of education", display(member.educationLevel)],
+        [memberFieldLabel("occupation"), display(member.occupation)],
+        [memberFieldLabel("educationLevel"), display(member.educationLevel)],
         ["Record created", formatDate(member.createdAt)],
       ],
     ],
@@ -300,7 +334,7 @@ export async function buildMemberPdf(member: ExportMember) {
   }
 
   drawSection("Profile");
-  drawParagraph("Profile", member.profile ?? "");
+  drawParagraph(memberFieldLabel("profile"), member.profile ?? "");
 
   page.drawText("Generated by MWC Church Management System", {
     x: 40,

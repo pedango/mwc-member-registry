@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { AssemblyBadge, StatusBadge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SectionCard } from "@/components/shared/SectionCard";
+import { memberFieldLabel } from "@/lib/validations/member";
 
 export default async function MemberProfilePage({
   params,
@@ -127,21 +128,21 @@ export default async function MemberProfilePage({
       <div className="grid gap-6 lg:grid-cols-2">
         <SectionCard title="Personal details">
           <dl className="grid gap-5 sm:grid-cols-2">
-            <Detail label="Title" value={member.title} />
-            <Detail label="First name" value={member.firstName} />
-            <Detail label="Middle name" value={member.middleName} />
-            <Detail label="Last name" value={member.lastName} />
+            <Detail label={memberFieldLabel("title")} value={member.title} />
+            <Detail label={memberFieldLabel("firstName")} value={member.firstName} />
+            <Detail label={memberFieldLabel("middleName")} value={member.middleName} />
+            <Detail label={memberFieldLabel("lastName")} value={member.lastName} />
             <Detail
-              label="Gender"
+              label={memberFieldLabel("sex")}
               value={member.sex === "FEMALE" ? "Female" : "Male"}
             />
             <Detail
-              label="Date of birth"
+              label={memberFieldLabel("dateOfBirth")}
               value={member.dateOfBirth ? formatDate(member.dateOfBirth) : null}
             />
-            <Detail label="Place of birth" value={member.placeOfBirth} />
+            <Detail label={memberFieldLabel("placeOfBirth")} value={member.placeOfBirth} />
             <Detail
-              label="Marital status"
+              label={memberFieldLabel("maritalStatus")}
               value={formatMaritalStatus(member.maritalStatus)}
             />
           </dl>
@@ -150,42 +151,45 @@ export default async function MemberProfilePage({
         <SectionCard title="Church details">
           <dl className="grid gap-5 sm:grid-cols-2">
             <Detail
-              label="Member type"
+              label={memberFieldLabel("status")}
               value={member.status === "OFFICER" ? "Officer" : "Member"}
             />
             <Detail
-              label="Assembly"
+              label={memberFieldLabel("assembly")}
               value={
                 member.assembly === "ENGLISH"
                   ? "English Assembly"
                   : "Local Assembly"
               }
             />
-            <Detail label="Occupation" value={member.occupation} />
-            <Detail label="Level of education" value={member.educationLevel} />
+            <Detail label={memberFieldLabel("occupation")} value={member.occupation} />
+            <Detail
+              label={memberFieldLabel("educationLevel")}
+              value={member.educationLevel}
+            />
           </dl>
         </SectionCard>
 
         <SectionCard title="Contact & address">
           <dl className="grid gap-5 sm:grid-cols-2">
-            <Detail label="Phone" value={member.phone} />
-            <Detail label="Email" value={member.email} />
-            <Detail label="Address line 1" value={member.addressLine1} />
-            <Detail label="Street name" value={member.streetName} />
-            <Detail label="City" value={member.city} />
-            <Detail label="GPS address" value={member.gpsAddress} />
-            <Detail label="Hometown" value={member.hometown} />
+            <Detail label={memberFieldLabel("phone")} value={member.phone} />
+            <Detail label={memberFieldLabel("email")} value={member.email} />
+            <Detail label={memberFieldLabel("addressLine1")} value={member.addressLine1} />
+            <Detail label={memberFieldLabel("streetName")} value={member.streetName} />
+            <Detail label={memberFieldLabel("city")} value={member.city} />
+            <Detail label={memberFieldLabel("gpsAddress")} value={member.gpsAddress} />
+            <Detail label={memberFieldLabel("hometown")} value={member.hometown} />
           </dl>
         </SectionCard>
 
         <SectionCard title="Baptism & faith">
           <dl className="grid gap-5 sm:grid-cols-2">
             <Detail
-              label="Holy Ghost baptism"
+              label={memberFieldLabel("holyGhostBaptism")}
               value={formatYesNo(member.holyGhostBaptism)}
             />
             <Detail
-              label="Date of Holy Spirit baptism"
+              label={memberFieldLabel("dateOfHolySpiritBaptism")}
               value={
                 member.dateOfHolySpiritBaptism
                   ? formatDate(member.dateOfHolySpiritBaptism)
@@ -193,17 +197,17 @@ export default async function MemberProfilePage({
               }
             />
             <Detail
-              label="Water baptism"
+              label={memberFieldLabel("waterBaptism")}
               value={formatYesNo(member.waterBaptism)}
             />
             <Detail
-              label="Date of baptism"
+              label={memberFieldLabel("dateOfBaptism")}
               value={
                 member.dateOfBaptism ? formatDate(member.dateOfBaptism) : null
               }
             />
             <Detail
-              label="Date of conversion"
+              label={memberFieldLabel("dateOfConversion")}
               value={
                 member.dateOfConversion
                   ? formatDate(member.dateOfConversion)
@@ -211,22 +215,25 @@ export default async function MemberProfilePage({
               }
             />
             <Detail
-              label="Date of joining us"
+              label={memberFieldLabel("dateOfJoining")}
               value={
                 member.dateOfJoining ? formatDate(member.dateOfJoining) : null
               }
             />
-            <Detail label="Place of baptism" value={member.placeOfBaptism} />
             <Detail
-              label="Officiating minister"
+              label={memberFieldLabel("placeOfBaptism")}
+              value={member.placeOfBaptism}
+            />
+            <Detail
+              label={memberFieldLabel("officiatingMinisterBaptism")}
               value={member.officiatingMinisterBaptism}
             />
             <Detail
-              label="Minister's district / church"
+              label={memberFieldLabel("officiatingMinisterDistrict")}
               value={member.officiatingMinisterDistrict}
             />
             <Detail
-              label="Communicant"
+              label={memberFieldLabel("communicant")}
               value={formatYesNo(member.communicant)}
             />
           </dl>
@@ -244,19 +251,22 @@ export default async function MemberProfilePage({
 
         <SectionCard title="Dedication" className="lg:col-span-2">
           <dl className="grid gap-5 sm:grid-cols-2">
-            <Detail label="Dedicated" value={formatYesNo(member.dedicated)} />
             <Detail
-              label="Dedication date"
+              label={memberFieldLabel("dedicated")}
+              value={formatYesNo(member.dedicated)}
+            />
+            <Detail
+              label={memberFieldLabel("dedicationDate")}
               value={
                 member.dedicationDate ? formatDate(member.dedicationDate) : null
               }
             />
             <Detail
-              label="Name of officiating minister"
+              label={memberFieldLabel("dedicationOfficiatingMinister")}
               value={member.dedicationOfficiatingMinister}
             />
             <Detail
-              label="Church where dedication was done"
+              label={memberFieldLabel("dedicationChurch")}
               value={member.dedicationChurch}
             />
           </dl>

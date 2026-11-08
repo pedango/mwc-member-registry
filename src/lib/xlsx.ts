@@ -1,94 +1,66 @@
 import * as XLSX from "xlsx";
 import {
+  MEMBER_TEMPLATE_COLUMNS,
   MEMBER_TEMPLATE_HEADERS,
   bulkMemberRowSchema,
   type BulkMemberRow,
+  type MemberTemplateKey,
 } from "@/lib/validations/member";
 
 export { MEMBER_TEMPLATE_COLUMNS, MEMBER_TEMPLATE_HEADERS } from "@/lib/validations/member";
 
-type TemplateHeader = (typeof MEMBER_TEMPLATE_HEADERS)[number];
-
-const HEADER_ALIASES: Record<string, TemplateHeader> = {
-  title: "title",
-  firstname: "firstName",
-  first: "firstName",
-  givenname: "firstName",
-  middlename: "middleName",
-  middle: "middleName",
-  othernames: "middleName",
-  othername: "middleName",
-  lastname: "lastName",
-  last: "lastName",
-  surname: "lastName",
-  familyname: "lastName",
-  sex: "sex",
-  gender: "sex",
-  dateofbirth: "dateOfBirth",
-  dob: "dateOfBirth",
-  birthdate: "dateOfBirth",
-  placeofbirth: "placeOfBirth",
-  phone: "phone",
-  phonenumber: "phone",
-  mobile: "phone",
-  contact: "phone",
-  email: "email",
-  status: "status",
-  membertype: "status",
-  type: "status",
-  maritalstatus: "maritalStatus",
-  addressline1: "addressLine1",
-  address: "addressLine1",
-  gpsaddress: "gpsAddress",
-  gps: "gpsAddress",
-  hometown: "hometown",
-  streetname: "streetName",
-  street: "streetName",
-  city: "city",
-  holyghostbaptism: "holyGhostBaptism",
-  dateofholyspiritbaptism: "dateOfHolySpiritBaptism",
-  waterbaptism: "waterBaptism",
-  dateofbaptism: "dateOfBaptism",
-  datebaptised: "dateOfBaptism",
-  baptismdate: "dateOfBaptism",
-  dateofconversion: "dateOfConversion",
-  dateofjoiningus: "dateOfJoining",
-  dateofjoining: "dateOfJoining",
-  placeofbaptism: "placeOfBaptism",
-  officiatingministerbaptism: "officiatingMinisterBaptism",
-  baptisedby: "officiatingMinisterBaptism",
-  baptizedby: "officiatingMinisterBaptism",
-  officiatingministersdistrictchurch: "officiatingMinisterDistrict",
-  officiatingministerdistrict: "officiatingMinisterDistrict",
-  communicant: "communicant",
-  occupation: "occupation",
-  levelofeducation: "educationLevel",
-  educationlevel: "educationLevel",
-  education: "educationLevel",
-  profile: "profile",
-  memberprofile: "profile",
-  biography: "profile",
-  bio: "profile",
-  testimony: "profile",
-  dedicated: "dedicated",
-  dedicationdate: "dedicationDate",
-  nameofofficiatingminister: "dedicationOfficiatingMinister",
-  dedicationofficiatingminister: "dedicationOfficiatingMinister",
-  churchwherededicationwasdone: "dedicationChurch",
-  dedicationchurch: "dedicationChurch",
-  assembly: "assembly",
-  service: "assembly",
-  photourl: "photoUrl",
-  photo: "photoUrl",
-};
-
-function canonicalHeader(raw: string): TemplateHeader | undefined {
-  const compact = raw
+function compactHeader(raw: string) {
+  return raw
     .replace(/^\uFEFF/, "")
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "");
-  return HEADER_ALIASES[compact];
+}
+
+const EXTRA_HEADER_ALIASES: Record<string, MemberTemplateKey> = {
+  first: "firstName",
+  givenname: "firstName",
+  middle: "middleName",
+  othernames: "middleName",
+  othername: "middleName",
+  last: "lastName",
+  surname: "lastName",
+  familyname: "lastName",
+  dob: "dateOfBirth",
+  birthdate: "dateOfBirth",
+  phonenumber: "phone",
+  mobile: "phone",
+  contact: "phone",
+  type: "status",
+  address: "addressLine1",
+  gps: "gpsAddress",
+  street: "streetName",
+  datebaptised: "dateOfBaptism",
+  baptismdate: "dateOfBaptism",
+  baptisedby: "officiatingMinisterBaptism",
+  baptizedby: "officiatingMinisterBaptism",
+  officiatingministerdistrict: "officiatingMinisterDistrict",
+  education: "educationLevel",
+  memberprofile: "profile",
+  biography: "profile",
+  bio: "profile",
+  testimony: "profile",
+  service: "assembly",
+  photo: "photoUrl",
+};
+
+const HEADER_ALIASES: Record<string, MemberTemplateKey> = {
+  ...Object.fromEntries(
+    MEMBER_TEMPLATE_COLUMNS.flatMap((column) => [
+      [compactHeader(column.key), column.key],
+      [compactHeader(column.name), column.key],
+    ])
+  ) as Record<string, MemberTemplateKey>,
+  ...EXTRA_HEADER_ALIASES,
+};
+
+function canonicalHeader(raw: string): MemberTemplateKey | undefined {
+  return HEADER_ALIASES[compactHeader(raw)];
 }
 
 function cellValue(value: unknown) {
@@ -104,46 +76,35 @@ function cellValue(value: unknown) {
   return value;
 }
 
+const SAMPLE_ROW: Partial<Record<MemberTemplateKey, string>> = {
+  title: "Mrs",
+  firstName: "Ama",
+  lastName: "Owusu",
+  sex: "FEMALE",
+  dateOfBirth: "1990-05-17",
+  placeOfBirth: "Kumasi",
+  phone: "0244000000",
+  email: "ama@example.com",
+  status: "MEMBER",
+  maritalStatus: "MARRIED",
+  addressLine1: "08 Long Lane",
+  gpsAddress: "GA-123-4567",
+  hometown: "Cape Coast",
+  city: "Accra",
+  holyGhostBaptism: "No",
+  waterBaptism: "No",
+  communicant: "No",
+  occupation: "Nurse",
+  educationLevel: "Senior High",
+  dedicated: "No",
+  profile: "Ama has worshipped with us since 2018 and serves in the choir.",
+  assembly: "ENGLISH",
+};
+
 export function buildMemberTemplateBuffer() {
   const worksheet = XLSX.utils.aoa_to_sheet([
-    [...MEMBER_TEMPLATE_HEADERS],
-    [
-      "Mrs",
-      "Ama",
-      "",
-      "Owusu",
-      "FEMALE",
-      "1990-05-17",
-      "Kumasi",
-      "0244000000",
-      "ama@example.com",
-      "MEMBER",
-      "MARRIED",
-      "08 Long Lane",
-      "GA-123-4567",
-      "Cape Coast",
-      "",
-      "Accra",
-      "No",
-      "",
-      "No",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "No",
-      "Nurse",
-      "Senior High",
-      "Ama has worshipped with us since 2018 and serves in the choir.",
-      "No",
-      "",
-      "",
-      "",
-      "ENGLISH",
-      "",
-    ],
+    MEMBER_TEMPLATE_COLUMNS.map((column) => column.name),
+    MEMBER_TEMPLATE_COLUMNS.map((column) => SAMPLE_ROW[column.key] ?? ""),
   ]);
 
   const workbook = XLSX.utils.book_new();
@@ -196,7 +157,13 @@ export function parseMemberSpreadsheet(buffer: ArrayBuffer | Buffer) {
 }
 
 export function buildSingleMemberExcelBuffer(member: Record<string, unknown>) {
-  const worksheet = XLSX.utils.json_to_sheet([member]);
+  const row: Record<string, unknown> = {};
+  for (const column of MEMBER_TEMPLATE_COLUMNS) {
+    row[column.name] = member[column.key] ?? "";
+  }
+  const worksheet = XLSX.utils.json_to_sheet([row], {
+    header: MEMBER_TEMPLATE_COLUMNS.map((column) => column.name),
+  });
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Member");
   return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" }) as Buffer;

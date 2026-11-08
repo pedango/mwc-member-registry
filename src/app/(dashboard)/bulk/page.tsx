@@ -230,7 +230,7 @@ export default function BulkPage() {
           <ul className="divide-y divide-mwc-border">
             {TEMPLATE_COLUMNS.map((column) => (
               <li
-                key={column.name}
+                key={column.key}
                 className="flex items-baseline justify-between gap-3 py-2 first:pt-0 last:pb-0"
               >
                 <code className="text-caption font-semibold text-foreground">
