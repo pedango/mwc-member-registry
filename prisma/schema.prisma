@@ -129,3 +129,19 @@ model Attendance {
   @@index([serviceDate, assembly])
   @@index([checkedInAt])
 }
+
+model Visitor {
+  id         String   @id @default(cuid())
+  firstName  String
+  otherNames String?
+  lastName   String
+  phone      String
+  email      String?
+  purpose    String
+  photoUrl   String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([lastName, firstName])
+  @@index([phone])
+}

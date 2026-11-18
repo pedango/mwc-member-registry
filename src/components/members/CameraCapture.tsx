@@ -7,8 +7,10 @@ import { toast } from "sonner";
 
 export function CameraCapture({
   onCapture,
+  facingMode = "environment",
 }: {
   onCapture: (dataUrl: string) => void;
+  facingMode?: "user" | "environment";
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -34,12 +36,11 @@ export function CameraCapture({
     setStarting(true);
     setPreview(null);
     try {
-      // Prefer the rear/back camera for member photos.
       let stream: MediaStream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: { exact: "environment" },
+            facingMode: { exact: facingMode },
             width: { ideal: 1280 },
             height: { ideal: 960 },
           },
@@ -49,7 +50,7 @@ export function CameraCapture({
         try {
           stream = await navigator.mediaDevices.getUserMedia({
             video: {
-              facingMode: { ideal: "environment" },
+              facingMode: { ideal: facingMode },
             },
             audio: false,
           });

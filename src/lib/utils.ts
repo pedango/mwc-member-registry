@@ -41,6 +41,18 @@ export function formatMemberName(member: {
   return [last, first, middle].filter(Boolean).join(" ");
 }
 
+export function formatVisitorName(visitor: {
+  firstName?: string | null;
+  lastName?: string | null;
+  otherNames?: string | null;
+}) {
+  return formatMemberName({
+    firstName: visitor.firstName,
+    lastName: visitor.lastName,
+    middleName: visitor.otherNames,
+  });
+}
+
 export function toDateInput(date: Date | string | null | undefined) {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;

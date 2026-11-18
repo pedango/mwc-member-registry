@@ -11,6 +11,10 @@ export default auth((req) => {
   const isAuthApi = pathname.startsWith("/api/auth");
   const isPublicCheckIn =
     pathname === "/check-in" || pathname.startsWith("/api/check-in");
+  const isPublicVisit =
+    pathname === "/visit" ||
+    pathname === "/api/visit" ||
+    pathname.startsWith("/api/visit/");
 
   const isPublicAsset =
     pathname.startsWith("/logos") ||
@@ -19,7 +23,7 @@ export default auth((req) => {
     pathname === "/favicon.ico" ||
     /\.[a-zA-Z0-9]+$/.test(pathname);
 
-  if (isAuthApi || isPublicAsset || isPublicCheckIn) {
+  if (isAuthApi || isPublicAsset || isPublicCheckIn || isPublicVisit) {
     return NextResponse.next();
   }
 

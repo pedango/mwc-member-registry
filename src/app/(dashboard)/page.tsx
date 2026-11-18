@@ -5,6 +5,7 @@ import {
   CalendarCheck,
   FileDown,
   FileSpreadsheet,
+  Handshake,
   LogIn,
   ScrollText,
   UserCheck,
@@ -47,6 +48,12 @@ const QUICK_ACTIONS: Array<{
     label: "Sunday attendance",
     hint: "QR check-in list",
     icon: CalendarCheck,
+  },
+  {
+    href: "/visitors",
+    label: "Visitors",
+    hint: "QR welcome form",
+    icon: Handshake,
   },
   {
     href: "/bulk",

@@ -6,6 +6,7 @@ import {
   Building2,
   CalendarCheck,
   FileSpreadsheet,
+  Handshake,
   LayoutDashboard,
   ScrollText,
   Users,
@@ -25,6 +26,7 @@ const navGroups = [
     items: [
       { href: "/members", label: "Members", icon: Users },
       { href: "/attendance", label: "Attendance", icon: CalendarCheck },
+      { href: "/visitors", label: "Visitors", icon: Handshake },
       { href: "/assemblies", label: "Assemblies", icon: Building2 },
       { href: "/bulk", label: "Bulk Import", icon: FileSpreadsheet },
       { href: "/admin", label: "Admins", icon: UserSquare2 },
